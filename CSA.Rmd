@@ -1,0 +1,34 @@
+---
+title: "CSA"
+author: "Sanjay Basu"
+date: "2/15/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Impact and cost-effectiveness of community-supported agriculture
+
+- use NHANES Population
+- set eligibles to <200% FPL or Medicaid
+- calculate their ASCVD scores, and among subset with T2DM their RECODE scores
+- baseline is no change in diet, using above scores to simulate 10-year and lifetime risk
+- then compare to cash only with 3 point HEI increase and associated changes modeled as a relative risk reduction [do you have a table of delta HEI versus delta ASCVD, delta A1c, and delta all-cause mort?]
+- then compare to CSA with 7 point HEI increase modeled as a relative risk reduction
+- two perspectives: healthcare system, and societal where latter includes cost of food insecurity?
+
+```{r packages}
+install.packages('nhanesA')
+```
+
+## Headline
+
+Comments
+
+```{r code}
+plot()
+```
+
+
