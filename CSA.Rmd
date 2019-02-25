@@ -48,10 +48,8 @@ demo <- nhanesTranslate('DEMO_H',
                         colnames = c('RIAGENDR','RIDRETH1'), 
                         data=demo)
 dietsub = diet[,c("SEQN","DR1IFDCD","DR1IKCAL")]
-dietsub$type = 1*((diet$DR1IFDCD>=92400000 & diet$DR1IFDCD<92800000) | (diet$DR1IFDCD>=95000000 & diet$DR1IFDCD<96000000))+ 
-  2*((diet$DR1IFDCD>=64000000 & diet$DR1IFDCD<64400000 ) | (diet$DR1IFDCD>=78100000 & diet$DR1IFDCD<78200000))+
-  3*(diet$DR1IFDCD>=92100000 & diet$DR1IFDCD<92400000) +
-  4*(diet$DR1IFDCD>=94000000 & diet$DR1IFDCD<95000000)
+
+
 library(tidyverse)
 aggdiet = dietsub %>%
   filter(type!=0) %>%
