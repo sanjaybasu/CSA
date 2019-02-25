@@ -11,24 +11,103 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Impact and cost-effectiveness of community-supported agriculture
 
+
+```{r packages}
+install.packages('nhanesA')
+install.packages('tidyverse')
+install.packages('stringr')
+
+
+```
+
+## NHANES pop
+
 - use NHANES Population
 - set eligibles to <200% FPL or Medicaid
+
+
+```{r nhanes}
+library(nhanesA)
+demo <- nhanes('DEMO_H')
+bmx <- nhanes('BMX_H')
+tchol <- nhanes('TCHOL_H')
+hdl <- nhanes('HDL_H')
+bpq <- nhanes('BPQ_H')
+ghb <- nhanes('GHB_H')
+diq <- nhanes('DIQ_H')
+biopro <- nhanes('BIOPRO_H')
+albcr <- nhanes('ALB_CR_H')
+bpx <- nhanes('BPX_H')
+diet <- nhanes('DR1IFF_H')
+rxq <- nhanes('RXQ_RX_H')
+smq <- nhanes('SMQ_H')
+mcq <- nhanes('MCQ_H')
+occ <- nhanes('OCQ_H')
+
+demo <- nhanesTranslate('DEMO_H', 
+                        colnames = c('RIAGENDR','RIDRETH1'), 
+                        data=demo)
+dietsub = diet[,c("SEQN","DR1IFDCD","DR1IKCAL")]
+dietsub$type = 1*((diet$DR1IFDCD>=92400000 & diet$DR1IFDCD<92800000) | (diet$DR1IFDCD>=95000000 & diet$DR1IFDCD<96000000))+ 
+  2*((diet$DR1IFDCD>=64000000 & diet$DR1IFDCD<64400000 ) | (diet$DR1IFDCD>=78100000 & diet$DR1IFDCD<78200000))+
+  3*(diet$DR1IFDCD>=92100000 & diet$DR1IFDCD<92400000) +
+  4*(diet$DR1IFDCD>=94000000 & diet$DR1IFDCD<95000000)
+library(tidyverse)
+aggdiet = dietsub %>%
+  filter(type!=0) %>%
+  group_by(SEQN,type) %>%
+  summarise(kcal = sum(DR1IKCAL)) %>%
+  spread(key=type, value=kcal) %>%
+  rename(ssb = `1`,
+         frt = `2`,
+         cof = `3`,
+         wat = `4`) %>%
+  replace_na(list(ssb = 0, frt = 0, cof = 0, wat = 0))
+
+merged <- merge(demo, bmx)
+merged = merge(merged, tchol)
+merged = merge(merged, hdl)
+merged = merge(merged, bpq)
+merged = merge(merged, ghb)
+merged = merge(merged, diq)
+merged = merge(merged, biopro)
+merged = merge(merged, albcr)
+merged = merge(merged, bpx)
+merged = merge(merged, aggdiet) 
+merged = merge(merged, rxq)
+merged = merge(merged, smq)
+merged = merge(merged, mcq)
+merged = merge(merged, occ)
+
+nhanes = list()
+nhanes$age = merged$RIDAGEYR
+nhanes$treated = rep(0,length(nhanes$age))
+nhanes$female = (merged$RIAGENDR=="Female")
+nhanes$black = (merged$RIDRETH1=="Non-Hispanic Black")
+nhanes$hisp = (merged$RIDRETH1=="Other Hispanic")
+nhanes$bmi = merged$BMXBMI
+nhanes$totchol = merged$LBXTC
+nhanes$hdlchol = merged$LBDHDD
+
+library(stringr)
+nhanes$statin = grepl("STATIN",merged$RXDDRUG)
+nhanes$hgba1c = merged$LBXGH
+nhanes$oralrx = grepl("METFORMIN",merged$RXDDRUG)|grepl("GLIPIZIDE",merged$RXDDRUG)
+nhanes$sercreat = merged$LBXSCR
+nhanes$uralbcreat =  merged$URDACT
+nhanes$sysbp = merged$BPXSY1
+nhanes$bprx = (merged$BPQ040A==1)
+nhanes$cvdhist = (merged$MCQ160F==1)|(merged$MCQ160F==1)
+nhanes$cvdhist[is.na(nhanes$cvdhist)]=0
+nhanes$anticoag = grepl("WARFARIN",merged$RXDDRUG)
+nhanes$cursmoke = (merged$SMQ040<3)
+
+
+```
+
+## 
 - calculate their ASCVD scores, and among subset with T2DM their RECODE scores
 - baseline is no change in diet, using above scores to simulate 10-year and lifetime risk
 - then compare to cash only with 3 point HEI increase and associated changes modeled as a relative risk reduction [do you have a table of delta HEI versus delta ASCVD, delta A1c, and delta all-cause mort?]
 - then compare to CSA with 7 point HEI increase modeled as a relative risk reduction
 - two perspectives: healthcare system, and societal where latter includes cost of food insecurity?
-
-```{r packages}
-install.packages('nhanesA')
-```
-
-## Headline
-
-Comments
-
-```{r code}
-plot()
-```
-
-
