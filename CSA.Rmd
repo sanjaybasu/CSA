@@ -1,5 +1,5 @@
 ---
-title: "CSA"
+title: "CSA: Health impact and cost-effectiveness of community-supported agriculture"
 author: "Sanjay Basu"
 date: "2/15/2019"
 output: html_document
@@ -7,17 +7,15 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+setwd("~/Documents/Epi/Research/SDH/CSA")
 ```
 
 ## Health impact and cost-effectiveness of community-supported agriculture
 
 
 ```{r packages}
-# install.packages('nhanesA')
-# install.packages('tidyverse')
-# install.packages('stringr')
-
-
+install.packages('nhanesA')
+install.packages('stringr')
 ```
 
 ## NHANES pop
@@ -44,7 +42,7 @@ smq <- nhanes('SMQ_H')
 mcq <- nhanes('MCQ_H')
 occ <- nhanes('OCQ_H')
 glu <- nhanes('GLU_H')
-hic <- nhanes('HIC_H')
+hic <- nhanes('HIQ_H')
 
 demo2 <- nhanes('DEMO_I')
 bmx2 <- nhanes('BMX_I')
@@ -62,7 +60,7 @@ smq2 <- nhanes('SMQ_I')
 mcq2 <- nhanes('MCQ_I')
 occ2 <- nhanes('OCQ_I')
 glu2 <- nhanes('GLU_I')
-hic2 <- nhanes('HIC_I')
+hic2 <- nhanes('HIQ_I')
 
 demo <- nhanesTranslate('DEMO_H', 
                         colnames = c('RIAGENDR','RIDRETH1'), 
@@ -71,10 +69,9 @@ demo2 <- nhanesTranslate('DEMO_I',
                         colnames = c('RIAGENDR','RIDRETH1'), 
                         data=demo2)
 
-library(tidyverse)
 
 
-merged <- merge(demo, bmx)
+merged = merge(demo, bmx)
 merged = merge(merged, tchol)
 merged = merge(merged, hdl)
 merged = merge(merged, bpq)
@@ -91,51 +88,69 @@ merged = merge(merged, occ)
 merged = merge(merged, glu)
 merged = merge(merged, hic)
 
-merged = merge(merged, demo2)
-merged <- merge(merged, bmx2)
-merged = merge(merged, tchol2)
-merged = merge(merged, hdl2)
-merged = merge(merged, bpq2)
-merged = merge(merged, ghb2)
-merged = merge(merged, diq2)
-merged = merge(merged, biopro2)
-merged = merge(merged, albcr2)
-merged = merge(merged, bpx2)
-merged = merge(merged, diet2) 
-merged = merge(merged, rxq2)
-merged = merge(merged, smq2)
-merged = merge(merged, mcq2)
-merged = merge(merged, occ2)
-merged = merge(merged, glu2)
-merged = merge(merged, hic2)
+merged2 = merge(demo2, bmx2)
+merged2 = merge(merged2, tchol2)
+merged2 = merge(merged2, hdl2)
+merged2 = merge(merged2, bpq2)
+merged2 = merge(merged2, ghb2)
+merged2 = merge(merged2, diq2)
+merged2 = merge(merged2, biopro2)
+merged2 = merge(merged2, albcr2)
+merged2 = merge(merged2, bpx2)
+merged2 = merge(merged2, diet2) 
+merged2 = merge(merged2, rxq2)
+merged2 = merge(merged2, smq2)
+merged2 = merge(merged2, mcq2)
+merged2 = merge(merged2, occ2)
+merged2 = merge(merged2, glu2)
+merged2 = merge(merged2, hic2)
 
-merged = merged[INDFMPIR<2 | HIQ031D==17]
+# https://www.r-bloggers.com/combining-dataframes-when-the-columns-dont-match/
+rbind.match.columns <- function(input1, input2) {
+    n.input1 <- ncol(input1)
+    n.input2 <- ncol(input2)
+ 
+    if (n.input2 < n.input1) {
+        TF.names <- which(names(input2) %in% names(input1))
+        column.names <- names(input2[, TF.names])
+    } else {
+        TF.names <- which(names(input1) %in% names(input2))
+        column.names <- names(input1[, TF.names])
+    }
+ 
+    return(rbind(input1[, column.names], input2[, column.names]))
+}
+ 
+mergedt = rbind.match.columns(merged, merged2)
 
-age = merged$RIDAGEYR
-female = (merged$RIAGENDR=="Female")
-black = (merged$RIDRETH1=="Non-Hispanic Black")
-hisp = (merged$RIDRETH1=="Other Hispanic")
-bmi = merged$BMXBMI
-totchol = merged$LBXTC
-hdlc = merged$LBDHDD
-dm = (merged$DIQ010==1) | 
-  (merged$LBXGH>=6.5) | 
-  (merged$LBXGLU>=126)
+save(mergedt, file="merged.RData")
+mergedt$eligible = ((mergedt$INDFMPIR<2) | (mergedt$HIQ031D==17))
+table(mergedt$eligible)
+mergedsub = mergedt[which(mergedt$eligible==1),]
+
+age = mergedsub$RIDAGEYR
+female = (mergedsub$RIAGENDR=="Female")
+black = (mergedsub$RIDRETH1=="Non-Hispanic Black")
+hisp = (mergedsub$RIDRETH1=="Other Hispanic")
+bmi = mergedsub$BMXBMI
+totchol = mergedsub$LBXTC
+hdlc = mergedsub$LBDHDD
+dm = (mergedsub$DIQ010==1) | 
+  (mergedsub$LBXGH>=6.5) | 
+  (mergedsub$LBXGLU>=126)
+sercreat = mergedsub$LBXSCR
+uralbcreat =  mergedsub$URDACT
+sysbp = mergedsub$BPXSY1
+rxbp = (mergedsub$BPQ040A==1)
+cvdhist = (mergedsub$MCQ160F==1)|(mergedsub$MCQ160F==1)
+cvdhist[is.na(cvdhist)]=0
+hgba1c = mergedsub$LBXGH
+cursmoke = (mergedsub$SMQ040<3)
 
 library(stringr)
-statin = grepl("STATIN",merged$RXDDRUG)
-hgba1c = merged$LBXGH
-oralrx = grepl("METFORMIN",merged$RXDDRUG)|grepl("GLIPIZIDE",merged$RXDDRUG)
-sercreat = merged$LBXSCR
-uralbcreat =  merged$URDACT
-sysbp = merged$BPXSY1
-rxbp = (merged$BPQ040A==1)
-cvdhist = (merged$MCQ160F==1)|(merged$MCQ160F==1)
-cvdhist[is.na(cvdhist)]=0
-anticoag = grepl("WARFARIN",merged$RXDDRUG)
-cursmoke = (merged$SMQ040<3)
-
-
+statin = grepl("STATIN",mergedsub$RXDDRUG)
+oralrx = grepl("METFORMIN",mergedsub$RXDDRUG)|grepl("GLIPIZIDE",mergedsub$RXDDRUG)
+anticoag = grepl("WARFARIN",mergedsub$RXDDRUG)
 ```
 
 ## Calculate baseline risk scores, 10 year and lifetime horizons
