@@ -131,26 +131,41 @@ mergedsub = mergedt[which(mergedt$eligible==1),]
 age = mergedsub$RIDAGEYR
 female = (mergedsub$RIAGENDR=="Female")
 black = (mergedsub$RIDRETH1=="Non-Hispanic Black")
+black[is.na(black)]=0
 hisp = (mergedsub$RIDRETH1=="Other Hispanic")
+hisp[is.na(hisp)]=0
 bmi = mergedsub$BMXBMI
+bmi[is.na(bmi)]=mean(na.omit(bmi))
 totchol = mergedsub$LBXTC
+totchol[is.na(totchol)]=mean(na.omit(totchol))
 hdlc = mergedsub$LBDHDD
+hdlc[is.na(hdlc)]=mean(na.omit(hdlc))
 dm = (mergedsub$DIQ010==1) | 
   (mergedsub$LBXGH>=6.5) | 
   (mergedsub$LBXGLU>=126)
+dm[is.na(dm)]=0
 sercreat = mergedsub$LBXSCR
+sercreat[is.na(sercreat)]=mean(na.omit(sercreat))
 uralbcreat =  mergedsub$URDACT
+uralbcreat[is.na(uralbcreat)]=mean(na.omit(uralbcreat))
 sysbp = mergedsub$BPXSY1
+sysbp[is.na(sysbp)]=mean(na.omit(sysbp))
 rxbp = (mergedsub$BPQ040A==1)
+rxbp[is.na(rxbp)]=0
 cvdhist = (mergedsub$MCQ160F==1)|(mergedsub$MCQ160F==1)
 cvdhist[is.na(cvdhist)]=0
 hgba1c = mergedsub$LBXGH
-cursmoke = (mergedsub$SMQ040<3)
+hgba1c[is.na(hgba1c)]=mean(na.omit(hgba1c))
+cursmoke = (mergedsub$SMQ040==1 | mergedsub$SMQ040==2)
+cursmoke[is.na(cursmoke)]=0
 
 library(stringr)
 statin = grepl("STATIN",mergedsub$RXDDRUG)
+statin[is.na(statin)]=0
 oralrx = grepl("METFORMIN",mergedsub$RXDDRUG)|grepl("GLIPIZIDE",mergedsub$RXDDRUG)
+oralrx[is.na(oralrx)]=0
 anticoag = grepl("WARFARIN",mergedsub$RXDDRUG)
+anticoag[is.na(anticoag)]=0
 ```
 
 ## Calculate baseline risk scores, 10 year and lifetime horizons
@@ -167,9 +182,7 @@ anticoag = grepl("WARFARIN",mergedsub$RXDDRUG)
 ```{r baseline risk scores, 10 year}
 
 # ASCVD
-
-
-ascvd   = ( 1.0*nhanes$female / (1.0 + exp( - (
+ascvd_10   = ( 1.0*female / (1.0 + exp( - (
   -12.823110 +
     0.106501 * as.numeric(age) +
     0.432440 * as.numeric(black) +
@@ -189,7 +202,7 @@ ascvd   = ( 1.0*nhanes$female / (1.0 + exp( - (
     0.070498 * as.numeric(black) * (as.numeric(totchol) / as.numeric(hdlc)) +
     -0.000173 * as.numeric(black)  * as.numeric(sysbp) * as.numeric(rxbp) +
     -0.000094 * as.numeric(age) * as.numeric(sysbp) * as.numeric(black)))))+
-  (1.0*(1-nhanes$female) / (1.0 + exp( - (
+  (1.0*(1-female) / (1.0 + exp( - (
   -11.679980 +
     0.064200 * as.numeric(age) +
     0.482835 * as.numeric(black) +
@@ -211,26 +224,206 @@ ascvd   = ( 1.0*nhanes$female / (1.0 + exp( - (
 
       
 # DM incidence
+# https://www.cdc.gov/diabetes/data/statistics-report/incidence-diabetes.html
+dminc_10 = (mean(c(.031,.068))*(age<45)+
+  mean(c(.109,.068))*(age>=45 & age<65)+
+  mean(c(.094,.068))*(age>=65))*100/1000*10
+
 
 # DM neph
+nbetax = (-1.938e-02*age+
+           -1.129e-02*female+
+           -8.812e-02*black+
+           2.338e-01*hisp+
+           1.483e-01*cursmoke+
+           3.027e-03*sysbp+
+           -7.952e-02*rxbp+
+           -1.256e-01*oralrx+
+           3.199e-02*anticoag+
+           -2.164e-02*cvdhist+
+           1.369e-01*hgba1c+
+           -1.112e-03*totchol+
+           6.289e-03*hdlc+
+           8.609e-01*sercreat+
+           3.615e-04*uralbcreat)
+esrdrisk_10 = 1-.973^exp(nbetax-mean(nbetax,na.rm=T))
 
 # DM retin
 
+rbetax = (2.285e-02*age+
+           2.264e-01*female+
+           -1.677e-01*black+
+           8.243e-03*sysbp+
+           6.393e-02*rxbp+
+           -2.349e-01*oralrx+
+           1.127e-01*cvdhist+
+           1.449e-01*hgba1c+
+           -1.676e-04*totchol+
+           5.447e-03*hdlc+
+           6.947e-01*sercreat+
+           1.992e-04*uralbcreat)
+retinrisk_10 = 1 - .92^exp(rbetax-mean(rbetax,na.rm=T))
+
+
 # DM neuro
+ebetax = (0.0302237*age+
+           -0.1868000*female+
+            -0.0944841*black+
+           0.0045609*sysbp+
+           0.1819157*rxbp+
+           -0.2574724*oralrx+
+           0.2667152*cvdhist+
+           0.1886579*hgba1c+
+           0.0021850*totchol+
+           -0.0053887*hdlc+
+           0.6044183*sercreat)
+neurorisk_10 = 1 - .87^exp(ebetax-mean(ebetax,na.rm=T))
+
+
 
 # All cause mort
-
-
-
+abetax = (6.703e-02*age+
+           -1.529e-01*female+
+            -2.393e-02*black+
+           5.399e-01*cursmoke+
+           -2.988e-03*sysbp+
+           8.776e-02*rxbp+
+           -2.681e-01*statin+
+           4.036e-01*anticoag+
+           -0.2574724*oralrx+
+           5.888e-01*cvdhist+
+           1.659e-01*hgba1c+
+           -9.478e-04*totchol+
+           -4.378e-03*hdlc+
+           3.597e-01*sercreat+
+           3.889e-04*uralbcreat)
+mortrisk_10 = 1 - .93^exp(abetax-mean(abetax,na.rm=T))
 ```
 
 ```{r baseline risk scores, lifetime}
+# https://www.cdc.gov/nchs/data/nvsr/nvsr66/nvsr66_04.pdf
+lifeexp = (female==0)*(black==0)*(hisp==0)*( # NH WM
+62.1*(age<20)+
+57.3*(age>=20 & age<25)+
+52.6*(age>=25 & age<30)+
+47.9*(age>=30 & age<35)+
+43.3*(age>=35 & age<40)+
+38.7*(age>=40 & age<45)+
+34.2*(age>=45 & age<50)+
+29.8*(age>=50 & age<55)+
+25.7*(age>=55 & age<60)+
+21.7*(age>=60 & age<65)+
+18*(age>=65 & age<70)+
+14.4*(age>=70 & age<75)+
+11.2*(age>=75 & age<80)+
+8.3*(age>=80)
+)+
+  (female==1)*(black==0)*(hisp==0)*( # NH WF
+66.7*(age<20)+
+61.8*(age>=20 & age<25)+
+56.9*(age>=25 & age<30)+
+52.1*(age>=30 & age<35)+
+47.3*(age>=35 & age<40)+
+42.5*(age>=40 & age<45)+
+37.9*(age>=45 & age<50)+
+33.3*(age>=50 & age<55)+
+28.9*(age>=55 & age<60)+
+24.7*(age>=60 & age<65)+
+20.5*(age>=65 & age<70)+
+16.6*(age>=70 & age<75)+
+13*(age>=75 & age<80)+
+9.7*(age>=80)
+  )+
+  (female==0)*(black==1)*(hisp==0)*( # NH BM
+58.3*(age<20)+
+53.6*(age>=20 & age<25)+
+49*(age>=25 & age<30)+
+44.5*(age>=30 & age<35)+
+40*(age>=35 & age<40)+
+35.6*(age>=40 & age<45)+
+31.2*(age>=45 & age<50)+
+27*(age>=50 & age<55)+
+23*(age>=55 & age<60)+
+19.4*(age>=60 & age<65)+
+16.3*(age>=65 & age<70)+
+13.2*(age>=70 & age<75)+
+10.5*(age>=75 & age<80)+
+8.1*(age>=80)  
+)+
+  (female==1)*(black==1)*(hisp==0)*( # NH BF
+64.2*(age<20)+
+59.3*(age>=20 & age<25)+
+54.5*(age>=25 & age<30)+
+49.7*(age>=30 & age<35)+
+44.9*(age>=35 & age<40)+
+40.3*(age>=40 & age<45)+
+35.7*(age>=45 & age<50)+
+31.3*(age>=50 & age<55)+
+27.2*(age>=55 & age<60)+
+23.3*(age>=60 & age<65)+
+19.5*(age>=65 & age<70)+
+16*(age>=70 & age<75)+
+12.7*(age>=75 & age<80)+
+9.8*(age>=80)      
+  )+
+  (female==0)*(black==0)*(hisp==1)*( # HM
+65*(age<20)+
+60.1*(age>=20 & age<25)+
+55.4*(age>=25 & age<30)+
+50.7*(age>=30 & age<35)+
+45.9*(age>=35 & age<40)+
+41.2*(age>=40 & age<45)+
+36.6*(age>=45 & age<50)+
+32.1*(age>=50 & age<55)+
+27.7*(age>=55 & age<60)+
+23.6*(age>=60 & age<65)+
+19.7*(age>=65 & age<70)+
+16*(age>=70 & age<75)+
+12.6*(age>=75 & age<80)+
+9.5*(age>=80)    
+)+
+  (female==1)*(black==0)*(hisp==1)*( # HF
+70*(age<20)+
+65*(age>=20 & age<25)+
+60.2*(age>=25 & age<30)+
+55.3*(age>=30 & age<35)+
+50.4*(age>=35 & age<40)+
+45.5*(age>=40 & age<45)+
+40.7*(age>=45 & age<50)+
+36.1*(age>=50 & age<55)+
+31.5*(age>=55 & age<60)+
+27*(age>=60 & age<65)+
+22.8*(age>=65 & age<70)+
+18.7*(age>=70 & age<75)+
+14.8*(age>=75 & age<80)+
+11.2*(age>=80)       
+  )
 
+ascvd_rate = -log(1-ascvd_10)/10
+ascvd_life = 1-exp(-ascvd_rate*lifeexp)
+
+dminc_rate = -log(1-dminc_10)/10
+dminc_life = 1-exp(-dminc_rate*lifeexp)
+
+esrdrisk_rate = -log(1-esrdrisk_10)/10
+esrdrisk_life = 1-exp(-esrdrisk_rate*lifeexp)
+
+retinrisk_rate = -log(1-retinrisk_10)/10
+retinrisk_life = 1-exp(-retinrisk_rate*lifeexp)
+
+neurorisk_rate = -log(1-neurorisk_10)/10
+neurorisk_life = 1-exp(-neurorisk_rate*lifeexp)
+
+mortrisk_rate = -log(1-mortrisk_10)/10
+mortrisk_life = 1-exp(-mortrisk_rate*lifeexp)
 
 ```
 
 
 ## Calculate change in incidence and mortality due to change in HEI, translate into QALYs, 10year and lifetime, healthcare and societal perspective [where latter includes productivity and agriculture econ effects]
+
+
+Process:  Converted raw data from Just Roots trial to % change in diet quality and averaged across 3 diet quality scores (HEI 2010, AHEI 2010, DASH Diet Score). Then related change in diet quality to change in outcome using randomized trials (when available) or prospective cohort studies that examined change in diet quality (as opposed to associations with baseline diet quality) to estimate effects. All effects had to be in at least 1 of the above 3 diet quality indices. I converted effect estimate to being for either a 10% or 20% change in diet quality, as specified above, based on information in cited articles. If effect estimates presented for more than 1 diet quality index, I averaged across available indices.  
 
 Treatment effect 1:  13% (95%CI 9% to 17%) increase in diet quality as measured by HEI, AHEI, or DASH Diet index
 
@@ -245,11 +438,65 @@ Change in HbA1c per 10% change in diet quality (in individuals with diabetes):3 
 Hazard Ratio for all-cause mortality for 20% change in diet quality1: 0.83 (95%CI: 0.78 to 0.88)
 
 
-Process:  Converted raw data from Just Roots trial to % change in diet quality and averaged across 3 diet quality scores (HEI 2010, AHEI 2010, DASH Diet Score). Then related change in diet quality to change in outcome using randomized trials (when available) or prospective cohort studies that examined change in diet quality (as opposed to associations with baseline diet quality) to estimate effects. All effects had to be in at least 1 of the above 3 diet quality indices. I converted effect estimate to being for either a 10% or 20% change in diet quality, as specified above, based on information in cited articles. If effect estimates presented for more than 1 diet quality index, I averaged across available indices.  
-
-
 1. 	Sotos-Prieto M, Bhupathiraju SN, Mattei J, et al. Association of Changes in Diet Quality with Total and Cause-Specific Mortality. N Engl J Med. 2017;377(2):143-153. doi:10.1056/NEJMoa1613502
 2. 	Sotos-Prieto Mercedes, Bhupathiraju Shilpa N., Mattei Josiemer, et al. Changes in Diet Quality Scores and Risk of Cardiovascular Disease Among US Men and Women. Circulation. 2015;132(23):2212-2219. doi:10.1161/CIRCULATIONAHA.115.017158
 3. 	Schwingshackl L, Chaimani A, Hoffmann G, Schwedhelm C, Boeing H. A network meta-analysis on the comparative efficacy of different dietary approaches on glycaemic control in patients with type 2 diabetes mellitus. Eur J Epidemiol. 2018;33(2):157-170. doi:10.1007/s10654-017-0352-x
 4. 	Ley SH, Pan A, Li Y, et al. Changes in Overall Diet Quality and Subsequent Type 2 Diabetes Risk: Three U.S. Prospective Cohorts. Diabetes Care. September 2016:dc160574. doi:10.2337/dc16-0574
 
+
+```{r change in incidence and mortality due to change in HEI}
+
+# rx effect 1
+
+iters=length(ascvd_10)
+set.seed(1)
+hr_ascvd = rnorm(iters, 1-0.91, (0.91-0.84)/1.96)/.2
+hr_ascvd[hr_ascvd<0]=0
+set.seed(2)
+hr_dminc = rnorm(iters, 1-0.84, (0.84-0.78)/1.96)/.1
+hr_dminc[hr_dminc<0]=0
+set.seed(3)
+delta_a1c = rnorm(iters, 0.32, (0.32-0.23)/1.96)/.1
+delta_a1c[delta_a1c<0]=0
+# appendix to doi:10.1001/jamainternmed.2014.2894
+# change in microvasc per 1% change in a1c
+hr_renal = 1-1/1.14/.9
+hr_neuro = 1-1/1.19/.9
+hr_retin = 1-1/1.29/.9
+set.seed(4)
+hr_allmort = rnorm(iters, 1-0.83, (0.83-0.78)/1.96)/.2
+hr_allmort[hr_allmort<0]=0
+set.seed(5)
+rx1_heidelta = rnorm(iters,0.13,(.13-.09)/1.96)
+rx1_heidelta[rx1_heidelta<0]=0
+rx1_ascvd_10 = (1-rx1_heidelta*hr_ascvd)*ascvd_10
+rx1_ascvd_life = (1-rx1_heidelta*hr_ascvd)*ascvd_life
+rx1_dminc_10 = (1-rx1_heidelta*hr_dminc)*dminc_10
+rx1_dminc_life = (1-rx1_heidelta*hr_dminc)*dminc_life
+rx1_esrdrisk_10 = (1-rx1_heidelta*delta_a1c*hr_renal)*esrdrisk_10
+rx1_esrdrisk_life = (1-rx1_heidelta*delta_a1c*hr_renal)*esrdrisk_life
+rx1_retinrisk_10 = (1-rx1_heidelta*delta_a1c*hr_retin)*retinrisk_10
+rx1_retinrisk_life = (1-rx1_heidelta*delta_a1c*hr_retin)*retinrisk_life
+rx1_neurorisk_10 = (1-rx1_heidelta*delta_a1c*hr_neuro)*neurorisk_10
+rx1_neurorisk_life = (1-rx1_heidelta*delta_a1c*hr_neuro)* neurorisk_life
+rx1_allmort_10 = (1-rx1_heidelta*hr_allmort)*mortrisk_10
+rx1_allmort_life = (1-rx1_heidelta*hr_allmort)*mortrisk_life
+
+set.seed(6)
+rx2_heidelta = rnorm(iters,0.07,(.07-.03)/1.96) 
+rx2_heidelta[rx2_heidelta<0]=0
+rx2_ascvd_10 = (1-rx2_heidelta*hr_ascvd)*ascvd_10
+rx2_ascvd_life = (1-rx2_heidelta*hr_ascvd)*ascvd_life
+rx2_dminc_10 = (1-rx2_heidelta*hr_dminc)*dminc_10
+rx2_dminc_life = (1-rx2_heidelta*hr_dminc)*dminc_life
+rx2_esrdrisk_10 = (1-rx2_heidelta*delta_a1c*hr_renal)*esrdrisk_10
+rx2_esrdrisk_life = (1-rx2_heidelta*delta_a1c*hr_renal)*esrdrisk_life
+rx2_retinrisk_10 = (1-rx2_heidelta*delta_a1c*hr_retin)*retinrisk_10
+rx2_retinrisk_life = (1-rx2_heidelta*delta_a1c*hr_retin)*retinrisk_life
+rx2_neurorisk_10 = (1-rx2_heidelta*delta_a1c*hr_neuro)*neurorisk_10
+rx2_neurorisk_life = (1-rx2_heidelta*delta_a1c*hr_neuro)* neurorisk_life
+rx2_allmort_10 = (1-rx2_heidelta*hr_allmort)*mortrisk_10
+rx2_allmort_life = (1-rx2_heidelta*hr_allmort)*mortrisk_life
+  
+
+```
