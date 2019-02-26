@@ -578,7 +578,7 @@ q_neuro_10 = d_neuro*10/2*neuro_events_10*(mort_events_10==0)+
 q_neuro_life = d_neuro*lifeexp/2*neuro_events_life*(mort_events_life==0)+
   1*10/2*neuro_events_life*(mort_events_life==1)
 q_allmort_10 = 10/2*(ascvd_events_10==0)*(dminc_events_10==0)*(esrd_events_10==0)*(retin_events_10==0)*(neuro_events_10==0)*(mort_events_10==1)
-q_allmort_life = 10/2*(ascvd_events_life==0)*(dminc_events_life==0)*(esrd_events_life==0)*(retin_events_life==0)*(neuro_events_life==0)*(mort_events_life==1)
+q_allmort_life = lifeexp/2*(ascvd_events_life==0)*(dminc_events_life==0)*(esrd_events_life==0)*(retin_events_life==0)*(neuro_events_life==0)*(mort_events_life==1)
 
 ```
 
