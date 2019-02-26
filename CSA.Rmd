@@ -172,7 +172,7 @@ anticoag[is.na(anticoag)]=0
 
 1. Yadlowsky S, Hayward RA, Sussman JB, McClelland RL, Min Y, Basu S. Clinical Implications of Revised Pooled Cohort Equations for Estimating Atherosclerotic Cardiovascular Disease Risk. Ann Intern Med. ;169:20–29. doi: 10.7326/M17-3011
 
-2.Basu S, Sussman JB, Berkowitz SA, Hayward RA, Yudkin JS. Development and validation of Risk Equations for Complications Of type 2 Diabetes (RECODe) using individual participant data from randomised trials. Lancet Diabetes Endocrinol. 2017;5(10):788-798.
+2. Basu S, Sussman JB, Berkowitz SA, Hayward RA, Yudkin JS. Development and validation of Risk Equations for Complications Of type 2 Diabetes (RECODe) using individual participant data from randomised trials. Lancet Diabetes Endocrinol. 2017;5(10):788-798.
 
 3. Sanjay Basu, Jeremy B. Sussman, Seth A. Berkowitz, Rodney A. Hayward, Alain G. Bertoni, Adolfo Correa, Stanford Mwasongwe, John S. Yudkin. Validation of Risk Equations for Complications of Type 2 Diabetes (RECODe) Using Individual Participant Data From Diverse Longitudinal Cohorts in the U.S. Diabetes Care Mar 2018, 41 (3) 586-595; DOI: 10.2337/dc17-2002
 
@@ -302,7 +302,7 @@ mortrisk_10 = 1 - .93^exp(abetax-mean(abetax,na.rm=T))
 
 ```{r baseline risk scores, lifetime}
 # https://www.cdc.gov/nchs/data/nvsr/nvsr66/nvsr66_04.pdf
-lifeexp = (female==0)*(black==0)*(hisp==0)*( # NH WM
+lifeexp = (female==0)*(black==0)*(hisp==0)*( # NH WM (non-Hispanic White Male)
 62.1*(age<20)+
 57.3*(age>=20 & age<25)+
 52.6*(age>=25 & age<30)+
@@ -420,7 +420,7 @@ mortrisk_life = 1-exp(-mortrisk_rate*lifeexp)
 ```
 
 
-## Calculate change in incidence and mortality due to change in HEI, translate into QALYs, 10year and lifetime, healthcare and societal perspective [where latter includes productivity and agriculture econ effects]
+## Calculate change in incidence and mortality risk due to change in HEI
 
 
 Process:  Converted raw data from Just Roots trial to % change in diet quality and averaged across 3 diet quality scores (HEI 2010, AHEI 2010, DASH Diet Score). Then related change in diet quality to change in outcome using randomized trials (when available) or prospective cohort studies that examined change in diet quality (as opposed to associations with baseline diet quality) to estimate effects. All effects had to be in at least 1 of the above 3 diet quality indices. I converted effect estimate to being for either a 10% or 20% change in diet quality, as specified above, based on information in cited articles. If effect estimates presented for more than 1 diet quality index, I averaged across available indices.  
@@ -446,8 +446,8 @@ Hazard Ratio for all-cause mortality for 20% change in diet quality1: 0.83 (95%C
 
 ```{r change in incidence and mortality due to change in HEI}
 
-# rx effect 1
 
+# input pars
 iters=length(ascvd_10)
 set.seed(1)
 hr_ascvd = rnorm(iters, 1-0.91, (0.91-0.84)/1.96)/.2
@@ -466,6 +466,8 @@ hr_retin = 1-1/1.29/.9
 set.seed(4)
 hr_allmort = rnorm(iters, 1-0.83, (0.83-0.78)/1.96)/.2
 hr_allmort[hr_allmort<0]=0
+
+# rx effect 1
 set.seed(5)
 rx1_heidelta = rnorm(iters,0.13,(.13-.09)/1.96)
 rx1_heidelta[rx1_heidelta<0]=0
@@ -482,6 +484,7 @@ rx1_neurorisk_life = (1-rx1_heidelta*delta_a1c*hr_neuro)* neurorisk_life
 rx1_allmort_10 = (1-rx1_heidelta*hr_allmort)*mortrisk_10
 rx1_allmort_life = (1-rx1_heidelta*hr_allmort)*mortrisk_life
 
+# rx effect 2
 set.seed(6)
 rx2_heidelta = rnorm(iters,0.07,(.07-.03)/1.96) 
 rx2_heidelta[rx2_heidelta<0]=0
@@ -498,5 +501,89 @@ rx2_neurorisk_life = (1-rx2_heidelta*delta_a1c*hr_neuro)* neurorisk_life
 rx2_allmort_10 = (1-rx2_heidelta*hr_allmort)*mortrisk_10
 rx2_allmort_life = (1-rx2_heidelta*hr_allmort)*mortrisk_life
   
+```
+
+## translate into QALYs, 10year and lifetime
+
+```{r QALYS}
+
+set.seed(7)
+ascvd_events_10 = rbinom(iters, 1, ascvd_10)
+set.seed(8)
+ascvd_events_life = rbinom(iters, 1, ascvd_life)
+set.seed(9)
+dminc_events_10 = rbinom(iters, 1, dminc_10)*(dm==0)
+set.seed(10)
+dminc_events_life = rbinom(iters, 1, dminc_life)*(dm==0)
+set.seed(11)
+dminter_10 = rbinom(iters,1,1-exp(-dminc_rate*10/2))
+set.seed(12)
+dminter_life = rbinom(iters,1,1-exp(-dminc_rate*lifeexp/2))
+set.seed(13)
+esrd_events_10 = rbinom(iters, 1, esrdrisk_10)*(dm==1 | dminter_10==1)
+set.seed(14)
+esrd_events_life = rbinom(iters, 1, esrdrisk_life)*(dm==1 | dminter_life==1)
+set.seed(15)
+retin_events_10 = rbinom(iters, 1, retinrisk_10)*(dm==1 | dminter_10==1)
+set.seed(16)
+retin_events_life = rbinom(iters, 1, retinrisk_life)*(dm==1 | dminter_life==1)
+set.seed(17)
+neuro_events_10 = rbinom(iters, 1, neurorisk_10)*(dm==1 | dminter_10==1)
+set.seed(18)
+neuro_events_life = rbinom(iters, 1, neurorisk_life)*(dm==1 | dminter_life==1)
+set.seed(19)
+mort_events_10 = rbinom(iters, 1, mortrisk_10)
+set.seed(20)
+mort_events_life = rbinom(iters, 1, mortrisk_life)
+
+# Salomon et al., Lancet 2012; 380: 2129–43
+# Disease event,	Estimated disutility on scale of 0 to 1 (95% CI)
+# Atherosclerotic cardiovascular disease	0.28 (0.06, 0.57)
+# DM incident, uncomplicated 0.01 (0, 0.02)
+# Renal failure/end-stage renal disease	0.57 (0.40, 0.75)
+# Retinopathy	0.20 (0.10, 0.40)
+# Neuropathy	0.10 (0.05, 0.20)
+
+set.seed(21)
+d_ascvd = rnorm(iters,.28,(.28-.06)/1.96)
+d_ascvd[d_ascvd<0]=0
+d_dminc = rnorm(iters,.01,.01/1.96)
+d_dminc[d_dminc<0]=0
+d_esrd = rnorm(iters,.57,(.57-.4)/1.96)
+d_esrd[d_esrd<0]=0
+d_retin = rnorm(iters,.2,(.2-.1)/1.96)
+d_retin[d_retin<0]=0
+d_neuro = rnorm(iters,.1,(.1-.05)/1.96)
+d_neuro[d_neuro<0]=0
+
+# QALYS lost
+q_ascvd_10 = d_ascvd*10/2*ascvd_events_10*(mort_events_10==0)+
+  1*10/2*ascvd_events_10*(mort_events_10==1)
+q_ascvd_life = d_ascvd*lifeexp/2*ascvd_events_life*(mort_events_life==0)+
+  1*10/2*ascvd_events_life*(mort_events_life==1)
+q_dminc_10 = d_dminc*10/2*dminc_events_10*(mort_events_10==0)+
+  1*10/2*dminc_events_10*(mort_events_10==1)
+q_dminc_life = d_dminc*lifeexp/2*dminc_events_life*(mort_events_life==0)+
+  1*10/2*dminc_events_life*(mort_events_life==1)
+q_esrd_10 = d_esrd*10/2*esrd_events_10*(mort_events_10==0)+
+  1*10/2*esrd_events_10*(mort_events_10==1)
+q_esrd_life = d_esrd*lifeexp/2*esrd_events_life*(mort_events_life==0)+
+  1*10/2*esrd_events_life*(mort_events_life==1)
+q_retin_10 = d_retin*10/2*retin_events_10*(mort_events_10==0)+
+  1*10/2*retin_events_10*(mort_events_10==1)
+q_retin_life = d_retin*lifeexp/2*retin_events_life*(mort_events_life==0)+
+  1*10/2*retin_events_life*(mort_events_life==1)
+q_neuro_10 = d_neuro*10/2*neuro_events_10*(mort_events_10==0)+
+  1*10/2*neuro_events_10*(mort_events_10==1)
+q_neuro_life = d_neuro*lifeexp/2*neuro_events_life*(mort_events_life==0)+
+  1*10/2*neuro_events_life*(mort_events_life==1)
+q_allmort_10 = 10/2*(ascvd_events_10==0)*(dminc_events_10==0)*(esrd_events_10==0)*(retin_events_10==0)*(neuro_events_10==0)*(mort_events_10==1)
+q_allmort_life = 10/2*(ascvd_events_life==0)*(dminc_events_life==0)*(esrd_events_life==0)*(retin_events_life==0)*(neuro_events_life==0)*(mort_events_life==1)
 
 ```
+
+
+## calculate costs, healthcare and societal perspective [where latter includes productivity and agriculture econ effects]
+
+
+
