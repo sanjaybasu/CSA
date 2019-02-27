@@ -564,36 +564,32 @@ d_neuro[d_neuro<0]=0
 q_ascvd_10 = d_ascvd*10/2*ascvd_events_10*(mort_events_10==0)+
   1*10/2*ascvd_events_10*(mort_events_10==1)
 q_ascvd_life = d_ascvd*lifeexp/2*ascvd_events_life*(mort_events_life==0)+
-  1*10/2*ascvd_events_life*(mort_events_life==1)
+  1*lifeexp/2*ascvd_events_life*(mort_events_life==1)
 q_dminc_10 = d_dminc*10/2*dminc_events_10*(mort_events_10==0)+
   1*10/2*dminc_events_10*(mort_events_10==1)
 q_dminc_life = d_dminc*lifeexp/2*dminc_events_life*(mort_events_life==0)+
-  1*10/2*dminc_events_life*(mort_events_life==1)
+  1*lifeexp/2*dminc_events_life*(mort_events_life==1)
 q_esrd_10 = d_esrd*10/2*esrd_events_10*(mort_events_10==0)+
   1*10/2*esrd_events_10*(mort_events_10==1)
 q_esrd_life = d_esrd*lifeexp/2*esrd_events_life*(mort_events_life==0)+
-  1*10/2*esrd_events_life*(mort_events_life==1)
+  1*lifeexp/2*esrd_events_life*(mort_events_life==1)
 q_retin_10 = d_retin*10/2*retin_events_10*(mort_events_10==0)+
   1*10/2*retin_events_10*(mort_events_10==1)
 q_retin_life = d_retin*lifeexp/2*retin_events_life*(mort_events_life==0)+
-  1*10/2*retin_events_life*(mort_events_life==1)
+  1*lifeexp/2*retin_events_life*(mort_events_life==1)
 q_neuro_10 = d_neuro*10/2*neuro_events_10*(mort_events_10==0)+
   1*10/2*neuro_events_10*(mort_events_10==1)
 q_neuro_life = d_neuro*lifeexp/2*neuro_events_life*(mort_events_life==0)+
-  1*10/2*neuro_events_life*(mort_events_life==1)
+  1*lifeexp/2*neuro_events_life*(mort_events_life==1)
 q_allmort_10 = 10/2*(ascvd_events_10==0)*(dminc_events_10==0)*(esrd_events_10==0)*(retin_events_10==0)*(neuro_events_10==0)*(mort_events_10==1)
 q_allmort_life = lifeexp/2*(ascvd_events_life==0)*(dminc_events_life==0)*(esrd_events_life==0)*(retin_events_life==0)*(neuro_events_life==0)*(mort_events_life==1)
 
-# QALYs per 10k pop
 library(data.table)
 qalys_10 = data.table(q_ascvd_10, q_dminc_10, q_esrd_10, q_retin_10, q_neuro_10, q_allmort_10)
 qalys_life = data.table(q_ascvd_life, q_dminc_life, q_esrd_life, q_retin_life, q_neuro_life, q_allmort_life)
-colSums(qalys_10)/iters*10000
-sum(colSums(qalys_10)/iters*10000)
-colSums(qalys_life)/iters*10000
-sum(colSums(qalys_life)/iters*10000)
 
-# QALYS saved by treatment 1
+
+# QALYS lost under treatment 1
 
 set.seed(7)
 rx1_ascvd_events_10 = rbinom(iters, 1, rx1_ascvd_10)
@@ -629,34 +625,32 @@ rx1_mort_events_life = rbinom(iters, 1, rx1_allmort_life)
 rx1_q_ascvd_10 = d_ascvd*10/2*rx1_ascvd_events_10*(rx1_mort_events_10==0)+
   1*10/2*rx1_ascvd_events_10*(rx1_mort_events_10==1)
 rx1_q_ascvd_life = d_ascvd*lifeexp/2*rx1_ascvd_events_life*(rx1_mort_events_life==0)+
-  1*10/2*rx1_ascvd_events_life*(rx1_mort_events_life==1)
+  1*lifeexp/2*rx1_ascvd_events_life*(rx1_mort_events_life==1)
 rx1_q_dminc_10 = d_dminc*10/2*rx1_dminc_events_10*(rx1_mort_events_10==0)+
   1*10/2*rx1_dminc_events_10*(rx1_mort_events_10==1)
 rx1_q_dminc_life = d_dminc*lifeexp/2*rx1_dminc_events_life*(rx1_mort_events_life==0)+
-  1*10/2*rx1_dminc_events_life*(rx1_mort_events_life==1)
+  1*lifeexp/2*rx1_dminc_events_life*(rx1_mort_events_life==1)
 rx1_q_esrd_10 = d_esrd*10/2*rx1_esrd_events_10*(rx1_mort_events_10==0)+
   1*10/2*rx1_esrd_events_10*(rx1_mort_events_10==1)
 rx1_q_esrd_life = d_esrd*lifeexp/2*rx1_esrd_events_life*(rx1_mort_events_life==0)+
-  1*10/2*rx1_esrd_events_life*(rx1_mort_events_life==1)
+  1*lifeexp/2*rx1_esrd_events_life*(rx1_mort_events_life==1)
 rx1_q_retin_10 = d_retin*10/2*rx1_retin_events_10*(rx1_mort_events_10==0)+
   1*10/2*rx1_retin_events_10*(rx1_mort_events_10==1)
 rx1_q_retin_life = d_retin*lifeexp/2*rx1_retin_events_life*(rx1_mort_events_life==0)+
-  1*10/2*rx1_retin_events_life*(rx1_mort_events_life==1)
+  1*lifeexp/2*rx1_retin_events_life*(rx1_mort_events_life==1)
 rx1_q_neuro_10 = d_neuro*10/2*rx1_neuro_events_10*(rx1_mort_events_10==0)+
   1*10/2*rx1_neuro_events_10*(rx1_mort_events_10==1)
 rx1_q_neuro_life = d_neuro*lifeexp/2*rx1_neuro_events_life*(rx1_mort_events_life==0)+
-  1*10/2*rx1_neuro_events_life*(rx1_mort_events_life==1)
+  1*lifeexp/2*rx1_neuro_events_life*(rx1_mort_events_life==1)
 rx1_q_allmort_10 = 10/2*(rx1_ascvd_events_10==0)*(rx1_dminc_events_10==0)*(rx1_esrd_events_10==0)*(rx1_retin_events_10==0)*(rx1_neuro_events_10==0)*(rx1_mort_events_10==1)
 rx1_q_allmort_life = lifeexp/2*(rx1_ascvd_events_life==0)*(rx1_dminc_events_life==0)*(rx1_esrd_events_life==0)*(rx1_retin_events_life==0)*(rx1_neuro_events_life==0)*(rx1_mort_events_life==1)
 
-# QALYs per 10k pop
-library(data.table)
 rx1_qalys_10 = data.table(rx1_q_ascvd_10, rx1_q_dminc_10, rx1_q_esrd_10, rx1_q_retin_10, rx1_q_neuro_10, rx1_q_allmort_10)
 rx1_qalys_life = data.table(rx1_q_ascvd_life, rx1_q_dminc_life, rx1_q_esrd_life, rx1_q_retin_life, rx1_q_neuro_life, rx1_q_allmort_life)
 
 
 
-# QALYS saved by treatment 1
+# QALYS lost under treatment 2
 
 set.seed(7)
 rx2_ascvd_events_10 = rbinom(iters, 1, rx2_ascvd_10)
@@ -692,27 +686,26 @@ rx2_mort_events_life = rbinom(iters, 1, rx2_allmort_life)
 rx2_q_ascvd_10 = d_ascvd*10/2*rx2_ascvd_events_10*(rx2_mort_events_10==0)+
   1*10/2*rx2_ascvd_events_10*(rx2_mort_events_10==1)
 rx2_q_ascvd_life = d_ascvd*lifeexp/2*rx2_ascvd_events_life*(rx2_mort_events_life==0)+
-  1*10/2*rx2_ascvd_events_life*(rx2_mort_events_life==1)
+  1*lifeexp/2*rx2_ascvd_events_life*(rx2_mort_events_life==1)
 rx2_q_dminc_10 = d_dminc*10/2*rx2_dminc_events_10*(rx2_mort_events_10==0)+
   1*10/2*rx2_dminc_events_10*(rx2_mort_events_10==1)
 rx2_q_dminc_life = d_dminc*lifeexp/2*rx2_dminc_events_life*(rx2_mort_events_life==0)+
-  1*10/2*rx2_dminc_events_life*(rx2_mort_events_life==1)
+  1*lifeexp/2*rx2_dminc_events_life*(rx2_mort_events_life==1)
 rx2_q_esrd_10 = d_esrd*10/2*rx2_esrd_events_10*(rx2_mort_events_10==0)+
   1*10/2*rx2_esrd_events_10*(rx2_mort_events_10==1)
 rx2_q_esrd_life = d_esrd*lifeexp/2*rx2_esrd_events_life*(rx2_mort_events_life==0)+
-  1*10/2*rx2_esrd_events_life*(rx2_mort_events_life==1)
+  1*lifeexp/2*rx2_esrd_events_life*(rx2_mort_events_life==1)
 rx2_q_retin_10 = d_retin*10/2*rx2_retin_events_10*(rx2_mort_events_10==0)+
   1*10/2*rx2_retin_events_10*(rx2_mort_events_10==1)
 rx2_q_retin_life = d_retin*lifeexp/2*rx2_retin_events_life*(rx2_mort_events_life==0)+
-  1*10/2*rx2_retin_events_life*(rx2_mort_events_life==1)
+  1*lifeexp/2*rx2_retin_events_life*(rx2_mort_events_life==1)
 rx2_q_neuro_10 = d_neuro*10/2*rx2_neuro_events_10*(rx2_mort_events_10==0)+
   1*10/2*rx2_neuro_events_10*(rx2_mort_events_10==1)
 rx2_q_neuro_life = d_neuro*lifeexp/2*rx2_neuro_events_life*(rx2_mort_events_life==0)+
-  1*10/2*rx2_neuro_events_life*(rx2_mort_events_life==1)
+  1*lifeexp/2*rx2_neuro_events_life*(rx2_mort_events_life==1)
 rx2_q_allmort_10 = 10/2*(rx2_ascvd_events_10==0)*(rx2_dminc_events_10==0)*(rx2_esrd_events_10==0)*(rx2_retin_events_10==0)*(rx2_neuro_events_10==0)*(rx2_mort_events_10==1)
 rx2_q_allmort_life = lifeexp/2*(rx2_ascvd_events_life==0)*(rx2_dminc_events_life==0)*(rx2_esrd_events_life==0)*(rx2_retin_events_life==0)*(rx2_neuro_events_life==0)*(rx2_mort_events_life==1)
 
-# QALYs per 10k pop
 rx2_qalys_10 = data.table(rx2_q_ascvd_10, rx2_q_dminc_10, rx2_q_esrd_10, rx2_q_retin_10, rx2_q_neuro_10, rx2_q_allmort_10)
 rx2_qalys_life = data.table(rx2_q_ascvd_life, rx2_q_dminc_life, rx2_q_esrd_life, rx2_q_retin_life, rx2_q_neuro_life, rx2_q_allmort_life)
 ```
@@ -720,18 +713,71 @@ rx2_qalys_life = data.table(rx2_q_ascvd_life, rx2_q_dminc_life, rx2_q_esrd_life,
 
 ## calculate costs, healthcare and societal perspective [where latter includes productivity and agriculture econ effects]
 ``` {r costs}
+# total annual heatlhcare cost estimates from Optum Clinformatics
+# $61,614 for each cardiovascular event (95% CI: $61,095, $62,132)
+# $22,526 for each incident uncomplicated case of diabetes (95% CI: $21,919, $23,132)
+# $293,490 for each case of end-stage renal disease (95% CI: $290,584, $296,396)
+# $26,174 for each case of retinopathy (95% CI: $25,578, $26,769)
+# $48,432 for each case of neuropathy (95% CI: $46,470, $50,393)
+
+set.seed(21)
+c_ascvd = rnorm(iters,61614,(61614-61095)/1.96)
+c_ascvd[c_ascvd<0]=0
+c_dminc = rnorm(iters,22526,(22526-21919)/1.96)
+c_dminc[c_dminc<0]=0
+c_esrd = rnorm(iters,293490,(293490-290584)/1.96)
+c_esrd[c_esrd<0]=0
+c_retin = rnorm(iters,26174,(26174-25578)/1.96)
+c_retin[c_retin<0]=0
+c_neuro = rnorm(iters,48432,(48432-46470)/1.96)
+c_neuro[c_neuro<0]=0
+
+# healthcare dollars spent at baseline
+c_ascvd_10 = c_ascvd*10/2*ascvd_events_10*(mort_events_10==0)+
+  c_ascvd*10/2*ascvd_events_10*(mort_events_10==1)
+c_ascvd_life = c_ascvd*lifeexp/2*ascvd_events_life*(mort_events_life==0)+
+  c_ascvd*lifeexp/2*ascvd_events_life*(mort_events_life==1)
+c_dminc_10 = c_dminc*10/2*dminc_events_10*(mort_events_10==0)+
+  c_dminc*10/2*dminc_events_10*(mort_events_10==1)
+c_dminc_life = c_dminc*lifeexp/2*dminc_events_life*(mort_events_life==0)+
+  c_dminc*lifeexp/2*dminc_events_life*(mort_events_life==1)
+c_esrd_10 = c_esrd*10/2*esrd_events_10*(mort_events_10==0)+
+  c_esrd*10/2*esrd_events_10*(mort_events_10==1)
+c_esrd_life = c_esrd*lifeexp/2*esrd_events_life*(mort_events_life==0)+
+  c_esrd*lifeexp/2*esrd_events_life*(mort_events_life==1)
+c_retin_10 = c_retin*10/2*retin_events_10*(mort_events_10==0)+
+  c_retin*10/2*retin_events_10*(mort_events_10==1)
+c_retin_life = c_retin*lifeexp/2*retin_events_life*(mort_events_life==0)+
+  c_retin*lifeexp/2*retin_events_life*(mort_events_life==1)
+c_neuro_10 = c_neuro*10/2*neuro_events_10*(mort_events_10==0)+
+  c_neuro*10/2*neuro_events_10*(mort_events_10==1)
+c_neuro_life = c_neuro*lifeexp/2*neuro_events_life*(mort_events_life==0)+
+  c_neuro*lifeexp/2*neuro_events_life*(mort_events_life==1)
+
+costs_10 = data.table(c_ascvd_10, c_dminc_10, c_esrd_10, c_retin_10, c_neuro_10)
+costs_life = data.table(c_ascvd_life, c_dminc_life, c_esrd_life, c_retin_life, c_neuro_life)
+
+
+
 
 ```
 
 # results tables
 ``` {r results tables}
-# QALYS saved by Rx 1
+
+# QALYS lost at baseline
+colSums(qalys_10)/iters*10000
+sum(colSums(qalys_10)/iters*10000)
+colSums(qalys_life)/iters*10000
+sum(colSums(qalys_life)/iters*10000)
+
+# QALYS lost under Rx 1
 colSums(rx1_qalys_10)/iters*10000
 sum(colSums(rx1_qalys_10)/iters*10000)
 colSums(rx1_qalys_life)/iters*10000
 sum(colSums(rx1_qalys_life)/iters*10000)
 
-# QALYS saved by Rx 2
+# QALYS lost under Rx 2
 colSums(rx2_qalys_10)/iters*10000
 sum(colSums(rx2_qalys_10)/iters*10000)
 colSums(rx2_qalys_life)/iters*10000
