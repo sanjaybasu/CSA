@@ -912,24 +912,24 @@ colSums(rx2_qalys_life)/iters*10000
 sum(colSums(rx2_qalys_life)/iters*10000)
 
 
-# ICER of Rx 1
+# ICER of Rx 1 healthcare
 (sum(colSums(rx1_costs_10+rx1_intcosts_10)/iters*10000)-sum(colSums(costs_10)/iters*10000))/
   (sum(colSums(rx1_qalys_10)/iters*10000)-sum(colSums(qalys_10)/iters*10000))
 (sum(colSums(rx1_costs_life+rx1_intcosts_life)/iters*10000)-sum(colSums(costs_life)/iters*10000))/
   (sum(colSums(rx1_qalys_life)/iters*10000)-sum(colSums(qalys_life)/iters*10000))
 
-# ICER of Rx 2
+# ICER of Rx 2 healthcare
 (sum(colSums(rx2_costs_10+rx2_intcosts_10)/iters*10000)-sum(colSums(costs_10)/iters*10000))/
   (sum(colSums(rx2_qalys_10)/iters*10000)-sum(colSums(qalys_10)/iters*10000))
 (sum(colSums(rx2_costs_life+rx2_intcosts_life)/iters*10000)-sum(colSums(costs_life)/iters*10000))/
   (sum(colSums(rx2_qalys_life)/iters*10000)-sum(colSums(qalys_life)/iters*10000))
-
 
 ```
 
 
 # results tables, societal perspective, 10yr and lifetime horizon
 ``` {r results tables, societal perspective}
+
 #  prod costs lost at baseline
 colSums(prod_10)/iters*10000
 sum(colSums(prod_10)/iters*10000)
@@ -957,20 +957,13 @@ sum(colSums(rx2_econben_10)/iters*10000)
 sum(colSums(rx2_econben_life)/iters*10000)
 
 
-# ICER of Rx 1
-(sum(colSums(rx1_costs_10+rx1_intcosts_10+rx1_prod_10)/iters*10000)-sum(colSums(costs_10+prod_10)/iters*10000))/
-  (sum(colSums(rx1_qalys_10)/iters*10000)-sum(colSums(qalys_10)/iters*10000))
-(sum(colSums(rx1_costs_life+rx1_intcosts_life+rx1_prod_life)/iters*10000)-sum(colSums(costs_life+prod_life)/iters*10000))/
-  (sum(colSums(rx1_qalys_life)/iters*10000)-sum(colSums(qalys_life)/iters*10000))
+# ICER of Rx 1 societal
+(sum(colSums(rx1_costs_10+rx1_intcosts_10+rx1_prod_10-rx1_econben_10)/iters*10000)-sum(colSums(costs_10+prod_10)/iters*10000))/(sum(colSums(rx1_qalys_10)/iters*10000)-sum(colSums(qalys_10)/iters*10000))
+(sum(colSums(rx1_costs_life+rx1_intcosts_life+rx1_prod_life-rx1_econben_life)/iters*10000)-sum(colSums(costs_life+prod_life)/iters*10000))/(sum(colSums(rx1_qalys_life)/iters*10000)-sum(colSums(qalys_life)/iters*10000))
 
-# ICER of Rx 2
-(sum(colSums(rx2_costs_10+rx2_intcosts_10+rx2_prod_10)/iters*10000)-sum(colSums(costs_10+prod_10)/iters*10000))/
-  (sum(colSums(rx2_qalys_10)/iters*10000)-sum(colSums(qalys_10)/iters*10000))
-(sum(colSums(rx2_costs_life+rx2_intcosts_life+rx2_prod_life)/iters*10000)-sum(colSums(costs_life+prod_life)/iters*10000))/
-  (sum(colSums(rx2_qalys_life)/iters*10000)-sum(colSums(qalys_life)/iters*10000))
-
-
-
+# ICER of Rx 2 societal
+(sum(colSums(rx2_costs_10+rx2_intcosts_10+rx2_prod_10-rx2_econben_10)/iters*10000)-sum(colSums(costs_10+prod_10)/iters*10000))/(sum(colSums(rx2_qalys_10)/iters*10000)-sum(colSums(qalys_10)/iters*10000))
+(sum(colSums(rx2_costs_life+rx2_intcosts_life+rx2_prod_life-rx2_econben_life)/iters*10000)-sum(colSums(costs_life+prod_life)/iters*10000))/(sum(colSums(rx2_qalys_life)/iters*10000)-sum(colSums(qalys_life)/iters*10000))
 
 ```
 
