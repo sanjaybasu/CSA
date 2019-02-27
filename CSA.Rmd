@@ -713,7 +713,7 @@ rx2_qalys_life = data.table(rx2_q_ascvd_life, rx2_q_dminc_life, rx2_q_esrd_life,
 
 ## calculate costs, healthcare and societal perspective [where latter includes productivity and agriculture econ effects]
 ``` {r costs}
-# total annual heatlhcare cost estimates from Optum Clinformatics
+# total annual healthcare cost estimates from Optum Clinformatics
 # $61,614 for each cardiovascular event (95% CI: $61,095, $62,132)
 # $22,526 for each incident uncomplicated case of diabetes (95% CI: $21,919, $23,132)
 # $293,490 for each case of end-stage renal disease (95% CI: $290,584, $296,396)
@@ -723,16 +723,21 @@ rx2_qalys_life = data.table(rx2_q_ascvd_life, rx2_q_dminc_life, rx2_q_esrd_life,
 set.seed(21)
 c_ascvd = rnorm(iters,61614,(61614-61095)/1.96)
 c_ascvd[c_ascvd<0]=0
+set.seed(22)
 c_dminc = rnorm(iters,22526,(22526-21919)/1.96)
 c_dminc[c_dminc<0]=0
+set.seed(23)
 c_esrd = rnorm(iters,293490,(293490-290584)/1.96)
 c_esrd[c_esrd<0]=0
+set.seed(24)
 c_retin = rnorm(iters,26174,(26174-25578)/1.96)
 c_retin[c_retin<0]=0
+set.seed(25)
 c_neuro = rnorm(iters,48432,(48432-46470)/1.96)
 c_neuro[c_neuro<0]=0
 
-# healthcare dollars spent at baseline
+
+# healthcare costs at baseline
 c_ascvd_10 = c_ascvd*10/2*ascvd_events_10
 c_ascvd_life = c_ascvd*lifeexp/2*ascvd_events_life
 c_dminc_10 = c_dminc*10/2*dminc_events_10
@@ -747,7 +752,7 @@ c_neuro_life = c_neuro*lifeexp/2*neuro_events_life
 costs_10 = data.table(c_ascvd_10, c_dminc_10, c_esrd_10, c_retin_10, c_neuro_10)
 costs_life = data.table(c_ascvd_life, c_dminc_life, c_esrd_life, c_retin_life, c_neuro_life)
 
-# healthcare dollars spent under rx 1
+# healthcare costs under rx 1
 rx1_c_ascvd_10 = c_ascvd*10/2*rx1_ascvd_events_10
 rx1_c_ascvd_life = c_ascvd*lifeexp/2*rx1_ascvd_events_life
 rx1_c_dminc_10 = c_dminc*10/2*rx1_dminc_events_10
@@ -762,7 +767,7 @@ rx1_c_neuro_life = c_neuro*lifeexp/2*rx1_neuro_events_life
 rx1_costs_10 = data.table(rx1_c_ascvd_10, rx1_c_dminc_10, rx1_c_esrd_10, rx1_c_retin_10, rx1_c_neuro_10)
 rx1_costs_life = data.table(rx1_c_ascvd_life, rx1_c_dminc_life, rx1_c_esrd_life, rx1_c_retin_life, rx1_c_neuro_life)
 
-# healthcare dollars spent under rx 2
+# healthcare costs under rx 2
 rx2_c_ascvd_10 = c_ascvd*10/2*rx2_ascvd_events_10
 rx2_c_ascvd_life = c_ascvd*lifeexp/2*rx2_ascvd_events_life
 rx2_c_dminc_10 = c_dminc*10/2*rx2_dminc_events_10
@@ -777,11 +782,94 @@ rx2_c_neuro_life = c_neuro*lifeexp/2*rx2_neuro_events_life
 rx2_costs_10 = data.table(rx2_c_ascvd_10, rx2_c_dminc_10, rx2_c_esrd_10, rx2_c_retin_10, rx2_c_neuro_10)
 rx2_costs_life = data.table(rx2_c_ascvd_life, rx2_c_dminc_life, rx2_c_esrd_life, rx2_c_retin_life, rx2_c_neuro_life)
 
+
+
+
+# productivity cost estimates
+# $1,085 for each cardiovascular disease event (95% CI: $521, $1,649).
+# $5,811 for each complication of diabetes (95% CI: $2,571, $9,052) 
+# 1 	Song X, Quek RGW, Gandra SR, Cappell KA, Fowler R, Cong Z. Productivity loss and indirect costs associated with cardiovascular events and related clinical procedures. BMC Health Serv Res. 2015;15:245. doi:10.1186/s12913-015-0925-x
+# 2. 	Ng YC, Jacobs P, Johnson JA. Productivity losses associated with diabetes in the US. Diabetes Care. 2001;24(2):257-261. doi:10.2337/DIACARE.24.2.257
+
+set.seed(21)
+p_ascvd = rnorm(iters,1085,(1085-521)/1.96)
+p_ascvd[p_ascvd<0]=0
+p_dminc = 0
+set.seed(23)
+p_esrd = rnorm(iters,5811,(5811-2571)/1.96)
+p_esrd[p_esrd<0]=0
+p_retin = p_esrd
+p_neuro = p_esrd
+
+
+# productivity costs at baseline
+p_ascvd_10 = p_ascvd*10/2*ascvd_events_10
+p_ascvd_life = p_ascvd*lifeexp/2*ascvd_events_life
+p_dminp_10 = p_dminc*10/2*dminp_events_10
+p_dminp_life = p_dminc*lifeexp/2*dminp_events_life
+p_esrd_10 = p_esrd*10/2*esrd_events_10
+p_esrd_life = p_esrd*lifeexp/2*esrd_events_life
+p_retin_10 = p_retin*10/2*retin_events_10
+p_retin_life = p_retin*lifeexp/2*retin_events_life
+p_neuro_10 = p_neuro*10/2*neuro_events_10
+p_neuro_life = p_neuro*lifeexp/2*neuro_events_life
+
+prod_10 = data.table(p_ascvd_10, p_dminp_10, p_esrd_10, p_retin_10, p_neuro_10)
+prod_life = data.table(p_ascvd_life, p_dminp_life, p_esrd_life, p_retin_life, p_neuro_life)
+
+# productivity costs under rx 1
+rx1_p_ascvd_10 = p_ascvd*10/2*rx1_ascvd_events_10
+rx1_p_ascvd_life = p_ascvd*lifeexp/2*rx1_ascvd_events_life
+rx1_p_dminp_10 = p_dminc*10/2*rx1_dminp_events_10
+rx1_p_dminp_life = p_dminc*lifeexp/2*rx1_dminp_events_life
+rx1_p_esrd_10 = p_esrd*10/2*rx1_esrd_events_10
+rx1_p_esrd_life = p_esrd*lifeexp/2*rx1_esrd_events_life
+rx1_p_retin_10 = p_retin*10/2*rx1_retin_events_10
+rx1_p_retin_life = p_retin*lifeexp/2*rx1_retin_events_life
+rx1_p_neuro_10 = p_neuro*10/2*rx1_neuro_events_10
+rx1_p_neuro_life = p_neuro*lifeexp/2*rx1_neuro_events_life
+
+rx1_prod_10 = data.table(rx1_p_ascvd_10, rx1_p_dminp_10, rx1_p_esrd_10, rx1_p_retin_10, rx1_p_neuro_10)
+rx1_prod_life = data.table(rx1_p_ascvd_life, rx1_p_dminp_life, rx1_p_esrd_life, rx1_p_retin_life, rx1_p_neuro_life)
+
+# productivity costs under rx 2
+rx2_p_ascvd_10 = p_ascvd*10/2*rx2_ascvd_events_10
+rx2_p_ascvd_life = p_ascvd*lifeexp/2*rx2_ascvd_events_life
+rx2_p_dminp_10 = p_dminc*10/2*rx2_dminp_events_10
+rx2_p_dminp_life = p_dminc*lifeexp/2*rx2_dminp_events_life
+rx2_p_esrd_10 = p_esrd*10/2*rx2_esrd_events_10
+rx2_p_esrd_life = p_esrd*lifeexp/2*rx2_esrd_events_life
+rx2_p_retin_10 = p_retin*10/2*rx2_retin_events_10
+rx2_p_retin_life = p_retin*lifeexp/2*rx2_retin_events_life
+rx2_p_neuro_10 = p_neuro*10/2*rx2_neuro_events_10
+rx2_p_neuro_life = p_neuro*lifeexp/2*rx2_neuro_events_life
+
+rx2_prod_10 = data.table(rx2_p_ascvd_10, rx2_p_dminp_10, rx2_p_esrd_10, rx2_p_retin_10, rx2_p_neuro_10)
+rx2_prod_life = data.table(rx2_p_ascvd_life, rx2_p_dminp_life, rx2_p_esrd_life, rx2_p_retin_life, rx2_p_neuro_life)
+
+
+
+
+# intervention costs, with placeholder 15% overhead cost
+rx1_intcosts_10 = 300*10*iters*1.15
+rx1_intcosts_life = 300*lifeexp*iters*1.15
+
+rx2_intcosts_10 = 300*10*iters*1.15
+rx2_intcosts_life = 300*lifeexp*iters*1.15
+
+# economic benefits from intervention, placeholder $50 per person per year net increase benefit to farms
+rx1_econben_10 =50*10*iters
+rx1_econben_life =50*lifeexp*iters
+
+rx2_econben_10 =50*10*iters
+rx2_econben_life =50*lifeexp*iters
+
+
 ```
 
 
-# results tables
-``` {r results tables}
+# results tables, healthcare perspective, 10yr and lifetime horizon
+``` {r results tables, healthcare perspective only}
 
 # healthcare costs lost at baseline
 colSums(costs_10)/iters*10000
@@ -792,15 +880,18 @@ sum(colSums(costs_life)/iters*10000)
 # healthcare costs lost under Rx 1
 colSums(rx1_costs_10)/iters*10000
 sum(colSums(rx1_costs_10)/iters*10000)
+sum(rx1_intcosts_10)
 colSums(rx1_costs_life)/iters*10000
 sum(colSums(rx1_costs_life)/iters*10000)
+sum(rx1_intcosts_life)
 
 # healthcare costs lost under Rx 2
 colSums(rx2_costs_10)/iters*10000
 sum(colSums(rx2_costs_10)/iters*10000)
+sum(rx2_intcosts_10)
 colSums(rx2_costs_life)/iters*10000
 sum(colSums(rx2_costs_life)/iters*10000)
-
+sum(rx2_intcosts_life)
 
 # QALYS lost at baseline
 colSums(qalys_10)/iters*10000
@@ -822,18 +913,66 @@ sum(colSums(rx2_qalys_life)/iters*10000)
 
 
 # ICER of Rx 1
-(sum(colSums(rx1_costs_10)/iters*10000)-sum(colSums(costs_10)/iters*10000))/
+(sum(colSums(rx1_costs_10+rx1_intcosts_10)/iters*10000)-sum(colSums(costs_10)/iters*10000))/
   (sum(colSums(rx1_qalys_10)/iters*10000)-sum(colSums(qalys_10)/iters*10000))
-(sum(colSums(rx1_costs_life)/iters*10000)-sum(colSums(costs_life)/iters*10000))/
+(sum(colSums(rx1_costs_life+rx1_intcosts_life)/iters*10000)-sum(colSums(costs_life)/iters*10000))/
   (sum(colSums(rx1_qalys_life)/iters*10000)-sum(colSums(qalys_life)/iters*10000))
 
 # ICER of Rx 2
-(sum(colSums(rx2_costs_10)/iters*10000)-sum(colSums(costs_10)/iters*10000))/
+(sum(colSums(rx2_costs_10+rx2_intcosts_10)/iters*10000)-sum(colSums(costs_10)/iters*10000))/
   (sum(colSums(rx2_qalys_10)/iters*10000)-sum(colSums(qalys_10)/iters*10000))
-(sum(colSums(rx2_costs_life)/iters*10000)-sum(colSums(costs_life)/iters*10000))/
+(sum(colSums(rx2_costs_life+rx2_intcosts_life)/iters*10000)-sum(colSums(costs_life)/iters*10000))/
   (sum(colSums(rx2_qalys_life)/iters*10000)-sum(colSums(qalys_life)/iters*10000))
 
 
 ```
 
+
+# results tables, societal perspective, 10yr and lifetime horizon
+``` {r results tables, societal perspective}
+#  prod costs lost at baseline
+colSums(prod_10)/iters*10000
+sum(colSums(prod_10)/iters*10000)
+colSums(prod_life)/iters*10000
+sum(colSums(prod_life)/iters*10000)
+
+#  prod costs lost under Rx 1
+colSums(rx1_prod_10)/iters*10000
+sum(colSums(rx1_prod_10)/iters*10000)
+colSums(rx1_prod_life)/iters*10000
+sum(colSums(rx1_prod_life)/iters*10000)
+
+#  prod costs lost under Rx 2
+colSums(rx2_prod_10)/iters*10000
+sum(colSums(rx2_prod_10)/iters*10000)
+colSums(rx2_prod_life)/iters*10000
+sum(colSums(rx2_prod_life)/iters*10000)
+
+# econ gains under Rx 1
+sum(colSums(rx1_econben_10)/iters*10000)
+sum(colSums(rx1_econben_life)/iters*10000)
+
+# econ gains under Rx 2
+sum(colSums(rx2_econben_10)/iters*10000)
+sum(colSums(rx2_econben_life)/iters*10000)
+
+
+# ICER of Rx 1
+(sum(colSums(rx1_costs_10+rx1_intcosts_10+rx1_prod_10)/iters*10000)-sum(colSums(costs_10+prod_10)/iters*10000))/
+  (sum(colSums(rx1_qalys_10)/iters*10000)-sum(colSums(qalys_10)/iters*10000))
+(sum(colSums(rx1_costs_life+rx1_intcosts_life+rx1_prod_life)/iters*10000)-sum(colSums(costs_life+prod_life)/iters*10000))/
+  (sum(colSums(rx1_qalys_life)/iters*10000)-sum(colSums(qalys_life)/iters*10000))
+
+# ICER of Rx 2
+(sum(colSums(rx2_costs_10+rx2_intcosts_10+rx2_prod_10)/iters*10000)-sum(colSums(costs_10+prod_10)/iters*10000))/
+  (sum(colSums(rx2_qalys_10)/iters*10000)-sum(colSums(qalys_10)/iters*10000))
+(sum(colSums(rx2_costs_life+rx2_intcosts_life+rx2_prod_life)/iters*10000)-sum(colSums(costs_life+prod_life)/iters*10000))/
+  (sum(colSums(rx2_qalys_life)/iters*10000)-sum(colSums(qalys_life)/iters*10000))
+
+
+
+
+```
+
+## sensitivity analysis to see what overhead rate represents the 'break-even' between cash and CSA (i.e. how cheap does the CSA have to run to offset the extra overhead) (or alternatively how much bigger an effect size would it need over cash, taking additional overhead as fixed).
 
