@@ -507,8 +507,8 @@ rx2_allmort_life = (1-rx2_heidelta*hr_allmort)*mortrisk_life
   
 ```
 
-## translate into QALYs, 10year and lifetime
 
+## translate into QALYs, 10year and lifetime
 ```{r QALYS lost at baseline}
 
 set.seed(7)
@@ -733,37 +733,74 @@ c_neuro = rnorm(iters,48432,(48432-46470)/1.96)
 c_neuro[c_neuro<0]=0
 
 # healthcare dollars spent at baseline
-c_ascvd_10 = c_ascvd*10/2*ascvd_events_10*(mort_events_10==0)+
-  c_ascvd*10/2*ascvd_events_10*(mort_events_10==1)
-c_ascvd_life = c_ascvd*lifeexp/2*ascvd_events_life*(mort_events_life==0)+
-  c_ascvd*lifeexp/2*ascvd_events_life*(mort_events_life==1)
-c_dminc_10 = c_dminc*10/2*dminc_events_10*(mort_events_10==0)+
-  c_dminc*10/2*dminc_events_10*(mort_events_10==1)
-c_dminc_life = c_dminc*lifeexp/2*dminc_events_life*(mort_events_life==0)+
-  c_dminc*lifeexp/2*dminc_events_life*(mort_events_life==1)
-c_esrd_10 = c_esrd*10/2*esrd_events_10*(mort_events_10==0)+
-  c_esrd*10/2*esrd_events_10*(mort_events_10==1)
-c_esrd_life = c_esrd*lifeexp/2*esrd_events_life*(mort_events_life==0)+
-  c_esrd*lifeexp/2*esrd_events_life*(mort_events_life==1)
-c_retin_10 = c_retin*10/2*retin_events_10*(mort_events_10==0)+
-  c_retin*10/2*retin_events_10*(mort_events_10==1)
-c_retin_life = c_retin*lifeexp/2*retin_events_life*(mort_events_life==0)+
-  c_retin*lifeexp/2*retin_events_life*(mort_events_life==1)
-c_neuro_10 = c_neuro*10/2*neuro_events_10*(mort_events_10==0)+
-  c_neuro*10/2*neuro_events_10*(mort_events_10==1)
-c_neuro_life = c_neuro*lifeexp/2*neuro_events_life*(mort_events_life==0)+
-  c_neuro*lifeexp/2*neuro_events_life*(mort_events_life==1)
+c_ascvd_10 = c_ascvd*10/2*ascvd_events_10
+c_ascvd_life = c_ascvd*lifeexp/2*ascvd_events_life
+c_dminc_10 = c_dminc*10/2*dminc_events_10
+c_dminc_life = c_dminc*lifeexp/2*dminc_events_life
+c_esrd_10 = c_esrd*10/2*esrd_events_10
+c_esrd_life = c_esrd*lifeexp/2*esrd_events_life
+c_retin_10 = c_retin*10/2*retin_events_10
+c_retin_life = c_retin*lifeexp/2*retin_events_life
+c_neuro_10 = c_neuro*10/2*neuro_events_10
+c_neuro_life = c_neuro*lifeexp/2*neuro_events_life
 
 costs_10 = data.table(c_ascvd_10, c_dminc_10, c_esrd_10, c_retin_10, c_neuro_10)
 costs_life = data.table(c_ascvd_life, c_dminc_life, c_esrd_life, c_retin_life, c_neuro_life)
 
+# healthcare dollars spent under rx 1
+rx1_c_ascvd_10 = c_ascvd*10/2*rx1_ascvd_events_10
+rx1_c_ascvd_life = c_ascvd*lifeexp/2*rx1_ascvd_events_life
+rx1_c_dminc_10 = c_dminc*10/2*rx1_dminc_events_10
+rx1_c_dminc_life = c_dminc*lifeexp/2*rx1_dminc_events_life
+rx1_c_esrd_10 = c_esrd*10/2*rx1_esrd_events_10
+rx1_c_esrd_life = c_esrd*lifeexp/2*rx1_esrd_events_life
+rx1_c_retin_10 = c_retin*10/2*rx1_retin_events_10
+rx1_c_retin_life = c_retin*lifeexp/2*rx1_retin_events_life
+rx1_c_neuro_10 = c_neuro*10/2*rx1_neuro_events_10
+rx1_c_neuro_life = c_neuro*lifeexp/2*rx1_neuro_events_life
 
+rx1_costs_10 = data.table(rx1_c_ascvd_10, rx1_c_dminc_10, rx1_c_esrd_10, rx1_c_retin_10, rx1_c_neuro_10)
+rx1_costs_life = data.table(rx1_c_ascvd_life, rx1_c_dminc_life, rx1_c_esrd_life, rx1_c_retin_life, rx1_c_neuro_life)
 
+# healthcare dollars spent under rx 2
+rx2_c_ascvd_10 = c_ascvd*10/2*rx2_ascvd_events_10
+rx2_c_ascvd_life = c_ascvd*lifeexp/2*rx2_ascvd_events_life
+rx2_c_dminc_10 = c_dminc*10/2*rx2_dminc_events_10
+rx2_c_dminc_life = c_dminc*lifeexp/2*rx2_dminc_events_life
+rx2_c_esrd_10 = c_esrd*10/2*rx2_esrd_events_10
+rx2_c_esrd_life = c_esrd*lifeexp/2*rx2_esrd_events_life
+rx2_c_retin_10 = c_retin*10/2*rx2_retin_events_10
+rx2_c_retin_life = c_retin*lifeexp/2*rx2_retin_events_life
+rx2_c_neuro_10 = c_neuro*10/2*rx2_neuro_events_10
+rx2_c_neuro_life = c_neuro*lifeexp/2*rx2_neuro_events_life
+
+rx2_costs_10 = data.table(rx2_c_ascvd_10, rx2_c_dminc_10, rx2_c_esrd_10, rx2_c_retin_10, rx2_c_neuro_10)
+rx2_costs_life = data.table(rx2_c_ascvd_life, rx2_c_dminc_life, rx2_c_esrd_life, rx2_c_retin_life, rx2_c_neuro_life)
 
 ```
 
+
 # results tables
 ``` {r results tables}
+
+# healthcare costs lost at baseline
+colSums(costs_10)/iters*10000
+sum(colSums(costs_10)/iters*10000)
+colSums(costs_life)/iters*10000
+sum(colSums(costs_life)/iters*10000)
+
+# healthcare costs lost under Rx 1
+colSums(rx1_costs_10)/iters*10000
+sum(colSums(rx1_costs_10)/iters*10000)
+colSums(rx1_costs_life)/iters*10000
+sum(colSums(rx1_costs_life)/iters*10000)
+
+# healthcare costs lost under Rx 2
+colSums(rx2_costs_10)/iters*10000
+sum(colSums(rx2_costs_10)/iters*10000)
+colSums(rx2_costs_life)/iters*10000
+sum(colSums(rx2_costs_life)/iters*10000)
+
 
 # QALYS lost at baseline
 colSums(qalys_10)/iters*10000
@@ -782,6 +819,20 @@ colSums(rx2_qalys_10)/iters*10000
 sum(colSums(rx2_qalys_10)/iters*10000)
 colSums(rx2_qalys_life)/iters*10000
 sum(colSums(rx2_qalys_life)/iters*10000)
+
+
+# ICER of Rx 1
+(sum(colSums(rx1_costs_10)/iters*10000)-sum(colSums(costs_10)/iters*10000))/
+  (sum(colSums(rx1_qalys_10)/iters*10000)-sum(colSums(qalys_10)/iters*10000))
+(sum(colSums(rx1_costs_life)/iters*10000)-sum(colSums(costs_life)/iters*10000))/
+  (sum(colSums(rx1_qalys_life)/iters*10000)-sum(colSums(qalys_life)/iters*10000))
+
+# ICER of Rx 2
+(sum(colSums(rx2_costs_10)/iters*10000)-sum(colSums(costs_10)/iters*10000))/
+  (sum(colSums(rx2_qalys_10)/iters*10000)-sum(colSums(qalys_10)/iters*10000))
+(sum(colSums(rx2_costs_life)/iters*10000)-sum(colSums(costs_life)/iters*10000))/
+  (sum(colSums(rx2_qalys_life)/iters*10000)-sum(colSums(qalys_life)/iters*10000))
+
 
 ```
 
