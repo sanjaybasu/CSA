@@ -6,19 +6,24 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+
+install.packages('nhanesA', repos = "https://cran.rstudio.com")
+install.packages('stringr', repos = "https://cran.rstudio.com")
+install.packages('data.table', repos = "https://cran.rstudio.com")
+install.packages('knitr', repos = "https://cran.rstudio.com")
+options(repos="https://cran.rstudio.com" )
 knitr::opts_chunk$set(echo = TRUE)
-setwd("~/Documents/Epi/Research/SDH/CSA")
 ```
 
 ## Health impact and cost-effectiveness of community-supported agriculture
 
+A a randomized clinical trial (NCT03231592) has revealed that participation in a community supported agriculture (CSA) intervention resulted in clinically meaningful improvements in diet quality. We sought to identify the population-level impact of broadened national CSA availability on cardiometabolic disease incidence and mortality, and assess the intervention's cost-effectiveness.
 
-```{r packages}
-install.packages('nhanesA')
-install.packages('stringr')
-install.packages('data.table')
+Sanjay Basu*, Seth Berkowitz
 
-```
+*basus@stanford.edu
+
+
 
 ## NHANES pop
 
@@ -805,8 +810,8 @@ p_neuro = p_esrd
 # productivity costs at baseline
 p_ascvd_10 = p_ascvd*10/2*ascvd_events_10
 p_ascvd_life = p_ascvd*lifeexp/2*ascvd_events_life
-p_dminp_10 = p_dminc*10/2*dminp_events_10
-p_dminp_life = p_dminc*lifeexp/2*dminp_events_life
+p_dminc_10 = p_dminc*10/2*dminc_events_10
+p_dminc_life = p_dminc*lifeexp/2*dminc_events_life
 p_esrd_10 = p_esrd*10/2*esrd_events_10
 p_esrd_life = p_esrd*lifeexp/2*esrd_events_life
 p_retin_10 = p_retin*10/2*retin_events_10
@@ -814,14 +819,14 @@ p_retin_life = p_retin*lifeexp/2*retin_events_life
 p_neuro_10 = p_neuro*10/2*neuro_events_10
 p_neuro_life = p_neuro*lifeexp/2*neuro_events_life
 
-prod_10 = data.table(p_ascvd_10, p_dminp_10, p_esrd_10, p_retin_10, p_neuro_10)
-prod_life = data.table(p_ascvd_life, p_dminp_life, p_esrd_life, p_retin_life, p_neuro_life)
+prod_10 = data.table(p_ascvd_10, p_dminc_10, p_esrd_10, p_retin_10, p_neuro_10)
+prod_life = data.table(p_ascvd_life, p_dminc_life, p_esrd_life, p_retin_life, p_neuro_life)
 
 # productivity costs under rx 1
 rx1_p_ascvd_10 = p_ascvd*10/2*rx1_ascvd_events_10
 rx1_p_ascvd_life = p_ascvd*lifeexp/2*rx1_ascvd_events_life
-rx1_p_dminp_10 = p_dminc*10/2*rx1_dminp_events_10
-rx1_p_dminp_life = p_dminc*lifeexp/2*rx1_dminp_events_life
+rx1_p_dminc_10 = p_dminc*10/2*rx1_dminc_events_10
+rx1_p_dminc_life = p_dminc*lifeexp/2*rx1_dminc_events_life
 rx1_p_esrd_10 = p_esrd*10/2*rx1_esrd_events_10
 rx1_p_esrd_life = p_esrd*lifeexp/2*rx1_esrd_events_life
 rx1_p_retin_10 = p_retin*10/2*rx1_retin_events_10
@@ -829,14 +834,14 @@ rx1_p_retin_life = p_retin*lifeexp/2*rx1_retin_events_life
 rx1_p_neuro_10 = p_neuro*10/2*rx1_neuro_events_10
 rx1_p_neuro_life = p_neuro*lifeexp/2*rx1_neuro_events_life
 
-rx1_prod_10 = data.table(rx1_p_ascvd_10, rx1_p_dminp_10, rx1_p_esrd_10, rx1_p_retin_10, rx1_p_neuro_10)
-rx1_prod_life = data.table(rx1_p_ascvd_life, rx1_p_dminp_life, rx1_p_esrd_life, rx1_p_retin_life, rx1_p_neuro_life)
+rx1_prod_10 = data.table(rx1_p_ascvd_10, rx1_p_dminc_10, rx1_p_esrd_10, rx1_p_retin_10, rx1_p_neuro_10)
+rx1_prod_life = data.table(rx1_p_ascvd_life, rx1_p_dminc_life, rx1_p_esrd_life, rx1_p_retin_life, rx1_p_neuro_life)
 
 # productivity costs under rx 2
 rx2_p_ascvd_10 = p_ascvd*10/2*rx2_ascvd_events_10
 rx2_p_ascvd_life = p_ascvd*lifeexp/2*rx2_ascvd_events_life
-rx2_p_dminp_10 = p_dminc*10/2*rx2_dminp_events_10
-rx2_p_dminp_life = p_dminc*lifeexp/2*rx2_dminp_events_life
+rx2_p_dminc_10 = p_dminc*10/2*rx2_dminc_events_10
+rx2_p_dminc_life = p_dminc*lifeexp/2*rx2_dminc_events_life
 rx2_p_esrd_10 = p_esrd*10/2*rx2_esrd_events_10
 rx2_p_esrd_life = p_esrd*lifeexp/2*rx2_esrd_events_life
 rx2_p_retin_10 = p_retin*10/2*rx2_retin_events_10
@@ -844,8 +849,8 @@ rx2_p_retin_life = p_retin*lifeexp/2*rx2_retin_events_life
 rx2_p_neuro_10 = p_neuro*10/2*rx2_neuro_events_10
 rx2_p_neuro_life = p_neuro*lifeexp/2*rx2_neuro_events_life
 
-rx2_prod_10 = data.table(rx2_p_ascvd_10, rx2_p_dminp_10, rx2_p_esrd_10, rx2_p_retin_10, rx2_p_neuro_10)
-rx2_prod_life = data.table(rx2_p_ascvd_life, rx2_p_dminp_life, rx2_p_esrd_life, rx2_p_retin_life, rx2_p_neuro_life)
+rx2_prod_10 = data.table(rx2_p_ascvd_10, rx2_p_dminc_10, rx2_p_esrd_10, rx2_p_retin_10, rx2_p_neuro_10)
+rx2_prod_life = data.table(rx2_p_ascvd_life, rx2_p_dminc_life, rx2_p_esrd_life, rx2_p_retin_life, rx2_p_neuro_life)
 
 
 
@@ -949,12 +954,12 @@ colSums(rx2_prod_life)/iters*10000
 sum(colSums(rx2_prod_life)/iters*10000)
 
 # econ gains under Rx 1
-sum(colSums(rx1_econben_10)/iters*10000)
-sum(colSums(rx1_econben_life)/iters*10000)
+sum((rx1_econben_10)/iters*10000)
+sum((rx1_econben_life)/iters*10000)
 
 # econ gains under Rx 2
-sum(colSums(rx2_econben_10)/iters*10000)
-sum(colSums(rx2_econben_life)/iters*10000)
+sum((rx2_econben_10)/iters*10000)
+sum((rx2_econben_life)/iters*10000)
 
 
 # ICER of Rx 1 societal
@@ -967,5 +972,6 @@ sum(colSums(rx2_econben_life)/iters*10000)
 
 ```
 
-## sensitivity analysis to see what overhead rate represents the 'break-even' between cash and CSA (i.e. how cheap does the CSA have to run to offset the extra overhead) (or alternatively how much bigger an effect size would it need over cash, taking additional overhead as fixed).
+## sensitivity analysis to see what overhead rate represents the 'break-even' between cash and CSA (i.e. how cheap does the CSA have to run to offset the extra overhead)
+## alternatively how much bigger an effect size would it need over cash, taking additional overhead as fixed).
 
