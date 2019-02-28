@@ -1,0 +1,134 @@
+---
+title: "CSA: Health impact and cost-effectiveness of community-supported agriculture"
+author: "Sanjay Basu"
+date: "2/15/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+install.packages('nhanesA', repos = "https://cran.rstudio.com")
+install.packages('stringr', repos = "https://cran.rstudio.com")
+install.packages('data.table', repos = "https://cran.rstudio.com")
+install.packages('knitr', repos = "https://cran.rstudio.com")
+options(repos="https://cran.rstudio.com" )
+knitr::opts_chunk$set(echo = TRUE)
+setwd("~/Documents/Epi/Research/SDH/CSA")
+```
+
+## Health impact and cost-effectiveness of community-supported agriculture
+
+A a randomized clinical trial (NCT03231592) has revealed that participation in a community supported agriculture (CSA) intervention resulted in clinically meaningful improvements in diet quality. We sought to identify the population-level impact of broadened national CSA availability on cardiometabolic disease incidence and mortality, and assess the intervention's cost-effectiveness.
+
+Sanjay Basu*, Seth Berkowitz
+
+*basus@stanford.edu
+
+
+
+# NHANES pop
+
+- use NHANES Population
+- set eligibles to <200% FPL or Medicaid
+- get variables for ASCVD inc, DM inc, DM microvasc complications, and all-cause mort [PCEs and RECODE]
+
+```{r nhanes}
+library(nhanesA)
+demo <- nhanes('DEMO_H')
+bmx <- nhanes('BMX_H')
+tchol <- nhanes('TCHOL_H')
+hdl <- nhanes('HDL_H')
+bpq <- nhanes('BPQ_H')
+ghb <- nhanes('GHB_H')
+diq <- nhanes('DIQ_H')
+biopro <- nhanes('BIOPRO_H')
+albcr <- nhanes('ALB_CR_H')
+bpx <- nhanes('BPX_H')
+diet <- nhanes('DR1IFF_H')
+rxq <- nhanes('RXQ_RX_H')
+smq <- nhanes('SMQ_H')
+mcq <- nhanes('MCQ_H')
+occ <- nhanes('OCQ_H')
+glu <- nhanes('GLU_H')
+hic <- nhanes('HIQ_H')
+
+demo2 <- nhanes('DEMO_I')
+bmx2 <- nhanes('BMX_I')
+tchol2 <- nhanes('TCHOL_I')
+hdl2 <- nhanes('HDL_I')
+bpq2 <- nhanes('BPQ_I')
+ghb2 <- nhanes('GHB_I')
+diq2 <- nhanes('DIQ_I')
+biopro2 <- nhanes('BIOPRO_I')
+albcr2 <- nhanes('ALB_CR_I')
+bpx2 <- nhanes('BPX_I')
+diet2 <- nhanes('DR1IFF_I')
+rxq2 <- nhanes('RXQ_RX_I')
+smq2 <- nhanes('SMQ_I')
+mcq2 <- nhanes('MCQ_I')
+occ2 <- nhanes('OCQ_I')
+glu2 <- nhanes('GLU_I')
+hic2 <- nhanes('HIQ_I')
+
+demo <- nhanesTranslate('DEMO_H', 
+                        colnames = c('RIAGENDR','RIDRETH1'), 
+                        data=demo)
+demo2 <- nhanesTranslate('DEMO_I', 
+                        colnames = c('RIAGENDR','RIDRETH1'), 
+                        data=demo2)
+
+
+
+merged = merge(demo, bmx)
+merged = merge(merged, tchol)
+merged = merge(merged, hdl)
+merged = merge(merged, bpq)
+merged = merge(merged, ghb)
+merged = merge(merged, diq)
+merged = merge(merged, biopro)
+merged = merge(merged, albcr)
+merged = merge(merged, bpx)
+merged = merge(merged, diet) 
+merged = merge(merged, rxq)
+merged = merge(merged, smq)
+merged = merge(merged, mcq)
+merged = merge(merged, occ)
+merged = merge(merged, glu)
+merged = merge(merged, hic)
+
+merged2 = merge(demo2, bmx2)
+merged2 = merge(merged2, tchol2)
+merged2 = merge(merged2, hdl2)
+merged2 = merge(merged2, bpq2)
+merged2 = merge(merged2, ghb2)
+merged2 = merge(merged2, diq2)
+merged2 = merge(merged2, biopro2)
+merged2 = merge(merged2, albcr2)
+merged2 = merge(merged2, bpx2)
+merged2 = merge(merged2, diet2) 
+merged2 = merge(merged2, rxq2)
+merged2 = merge(merged2, smq2)
+merged2 = merge(merged2, mcq2)
+merged2 = merge(merged2, occ2)
+merged2 = merge(merged2, glu2)
+merged2 = merge(merged2, hic2)
+
+# https://www.r-bloggers.com/combining-dataframes-when-the-columns-dont-match/
+rbind.match.columns <- function(input1, input2) {
+    n.input1 <- ncol(input1)
+    n.input2 <- ncol(input2)
+ 
+    if (n.input2 < n.input1) {
+        TF.names <- which(names(input2) %in% names(input1))
+        column.names <- names(input2[, TF.names])
+    } else {
+        TF.names <- which(names(input1) %in% names(input2))
+        column.names <- names(input1[, TF.names])
+    }
+ 
+    return(rbind(input1[, column.names], input2[, column.names]))
+}
+ 
+mergedt = rbind.match.columns(merged, merged2)
+
+save(mergedt, file="merged.RData")
