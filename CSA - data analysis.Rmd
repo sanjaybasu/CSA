@@ -387,6 +387,9 @@ rx1_neurorisk_life = (1-rx1_heidelta*delta_a1c*hr_neuro)* neurorisk_life
 rx1_allmort_10 = (1-rx1_heidelta*hr_allmort)*mortrisk_10
 rx1_allmort_life = (1-rx1_heidelta*hr_allmort)*mortrisk_life
 
+rx1_dminc_rate = -log(1-rx1_dminc_10)/10
+rx1_dminc_life = 1-exp(-rx1_dminc_rate*lifeexp)
+
 # rx effect 2
 set.seed(6)
 rx2_heidelta = rnorm(iters,0.07,(.07-.03)/1.96) 
@@ -405,6 +408,9 @@ rx2_neurorisk_life = (1-rx2_heidelta*delta_a1c*hr_neuro)* neurorisk_life
 rx2_allmort_10 = (1-rx2_heidelta*hr_allmort)*mortrisk_10
 rx2_allmort_life = (1-rx2_heidelta*hr_allmort)*mortrisk_life
   
+rx2_dminc_rate = -log(1-rx2_dminc_10)/10
+rx2_dminc_life = 1-exp(-rx2_dminc_rate*lifeexp)
+
 ```
 
 
@@ -500,9 +506,9 @@ rx1_dminc_events_10 = rbinom(iters, 1, rx1_dminc_10)*(dm==0)
 set.seed(10)
 rx1_dminc_events_life = rbinom(iters, 1, rx1_dminc_life)*(dm==0)
 set.seed(11)
-rx1_dminter_10 = rbinom(iters,1,1-exp(log(1-rx1_dminc_10)/10*10/2))
+rx1_dminter_10 = rbinom(iters,1,1-exp(-rx1_dminc_rate*10/2))
 set.seed(12)
-rx1_dminter_life = rbinom(iters,1,1-exp(log(1-rx1_dminc_life)/10*lifeexp/2))
+rx1_dminter_life = rbinom(iters,1,1-exp(-rx1_dminc_rate*lifeexp/2))
 set.seed(13)
 rx1_esrd_events_10 = rbinom(iters, 1, rx1_esrdrisk_10)*(dm==1 | rx1_dminter_10==1)
 set.seed(14)
@@ -561,9 +567,9 @@ rx2_dminc_events_10 = rbinom(iters, 1, rx2_dminc_10)*(dm==0)
 set.seed(10)
 rx2_dminc_events_life = rbinom(iters, 1, rx2_dminc_life)*(dm==0)
 set.seed(11)
-rx2_dminter_10 = rbinom(iters,1,1-exp(log(1-rx2_dminc_10)/10*10/2))
+rx2_dminter_10 = rbinom(iters,1,1-exp(-rx2_dminc_rate*10/2))
 set.seed(12)
-rx2_dminter_life = rbinom(iters,1,1-exp(log(1-rx2_dminc_life)/10*lifeexp/2))
+rx2_dminter_life = rbinom(iters,1,1-exp(-rx2_dminc_rate*lifeexp/2))
 set.seed(13)
 rx2_esrd_events_10 = rbinom(iters, 1, rx2_esrdrisk_10)*(dm==1 | rx2_dminter_10==1)
 set.seed(14)
@@ -613,7 +619,7 @@ rx2_qalys_life = data.table(rx2_q_ascvd_life, rx2_q_dminc_life, rx2_q_esrd_life,
 
 # calculate costs, healthcare and societal perspective [where latter includes productivity and agriculture econ effects]
 ``` {r costs}
-# total annual healthcare cost estimates from Optum Clinformatics
+# total healthcare cost estimates from Optum Clinformatics
 # $61,614 for each cardiovascular event (95% CI: $61,095, $62,132)
 # $22,526 for each incident uncomplicated case of diabetes (95% CI: $21,919, $23,132)
 # $293,490 for each case of end-stage renal disease (95% CI: $290,584, $296,396)
@@ -638,46 +644,46 @@ c_neuro[c_neuro<0]=0
 
 
 # healthcare costs at baseline
-c_ascvd_10 = c_ascvd*10/2*ascvd_events_10
-c_ascvd_life = c_ascvd*lifeexp/2*ascvd_events_life
-c_dminc_10 = c_dminc*10/2*dminc_events_10
-c_dminc_life = c_dminc*lifeexp/2*dminc_events_life
-c_esrd_10 = c_esrd*10/2*esrd_events_10
-c_esrd_life = c_esrd*lifeexp/2*esrd_events_life
-c_retin_10 = c_retin*10/2*retin_events_10
-c_retin_life = c_retin*lifeexp/2*retin_events_life
-c_neuro_10 = c_neuro*10/2*neuro_events_10
-c_neuro_life = c_neuro*lifeexp/2*neuro_events_life
+c_ascvd_10 = c_ascvd*ascvd_events_10
+c_ascvd_life = c_ascvd*ascvd_events_life
+c_dminc_10 = c_dminc*dminc_events_10
+c_dminc_life = c_dminc*dminc_events_life
+c_esrd_10 = c_esrd*esrd_events_10
+c_esrd_life = c_esrd*esrd_events_life
+c_retin_10 = c_retin*retin_events_10
+c_retin_life = c_retin*retin_events_life
+c_neuro_10 = c_neuro*neuro_events_10
+c_neuro_life = c_neuro*neuro_events_life
 
 costs_10 = data.table(c_ascvd_10, c_dminc_10, c_esrd_10, c_retin_10, c_neuro_10)
 costs_life = data.table(c_ascvd_life, c_dminc_life, c_esrd_life, c_retin_life, c_neuro_life)
 
 # healthcare costs under rx 1
-rx1_c_ascvd_10 = c_ascvd*10/2*rx1_ascvd_events_10
-rx1_c_ascvd_life = c_ascvd*lifeexp/2*rx1_ascvd_events_life
-rx1_c_dminc_10 = c_dminc*10/2*rx1_dminc_events_10
-rx1_c_dminc_life = c_dminc*lifeexp/2*rx1_dminc_events_life
-rx1_c_esrd_10 = c_esrd*10/2*rx1_esrd_events_10
-rx1_c_esrd_life = c_esrd*lifeexp/2*rx1_esrd_events_life
-rx1_c_retin_10 = c_retin*10/2*rx1_retin_events_10
-rx1_c_retin_life = c_retin*lifeexp/2*rx1_retin_events_life
-rx1_c_neuro_10 = c_neuro*10/2*rx1_neuro_events_10
-rx1_c_neuro_life = c_neuro*lifeexp/2*rx1_neuro_events_life
+rx1_c_ascvd_10 = c_ascvd*rx1_ascvd_events_10
+rx1_c_ascvd_life = c_ascvd*rx1_ascvd_events_life
+rx1_c_dminc_10 = c_dminc*rx1_dminc_events_10
+rx1_c_dminc_life = c_dminc*rx1_dminc_events_life
+rx1_c_esrd_10 = c_esrd*rx1_esrd_events_10
+rx1_c_esrd_life = c_esrd*rx1_esrd_events_life
+rx1_c_retin_10 = c_retin*rx1_retin_events_10
+rx1_c_retin_life = c_retin*rx1_retin_events_life
+rx1_c_neuro_10 = c_neuro*rx1_neuro_events_10
+rx1_c_neuro_life = c_neuro*rx1_neuro_events_life
 
 rx1_costs_10 = data.table(rx1_c_ascvd_10, rx1_c_dminc_10, rx1_c_esrd_10, rx1_c_retin_10, rx1_c_neuro_10)
 rx1_costs_life = data.table(rx1_c_ascvd_life, rx1_c_dminc_life, rx1_c_esrd_life, rx1_c_retin_life, rx1_c_neuro_life)
 
 # healthcare costs under rx 2
-rx2_c_ascvd_10 = c_ascvd*10/2*rx2_ascvd_events_10
-rx2_c_ascvd_life = c_ascvd*lifeexp/2*rx2_ascvd_events_life
-rx2_c_dminc_10 = c_dminc*10/2*rx2_dminc_events_10
-rx2_c_dminc_life = c_dminc*lifeexp/2*rx2_dminc_events_life
-rx2_c_esrd_10 = c_esrd*10/2*rx2_esrd_events_10
-rx2_c_esrd_life = c_esrd*lifeexp/2*rx2_esrd_events_life
-rx2_c_retin_10 = c_retin*10/2*rx2_retin_events_10
-rx2_c_retin_life = c_retin*lifeexp/2*rx2_retin_events_life
-rx2_c_neuro_10 = c_neuro*10/2*rx2_neuro_events_10
-rx2_c_neuro_life = c_neuro*lifeexp/2*rx2_neuro_events_life
+rx2_c_ascvd_10 = c_ascvd*rx2_ascvd_events_10
+rx2_c_ascvd_life = c_ascvd*rx2_ascvd_events_life
+rx2_c_dminc_10 = c_dminc*rx2_dminc_events_10
+rx2_c_dminc_life = c_dminc*rx2_dminc_events_life
+rx2_c_esrd_10 = c_esrd*rx2_esrd_events_10
+rx2_c_esrd_life = c_esrd*rx2_esrd_events_life
+rx2_c_retin_10 = c_retin*rx2_retin_events_10
+rx2_c_retin_life = c_retin*rx2_retin_events_life
+rx2_c_neuro_10 = c_neuro*rx2_neuro_events_10
+rx2_c_neuro_life = c_neuro*rx2_neuro_events_life
 
 rx2_costs_10 = data.table(rx2_c_ascvd_10, rx2_c_dminc_10, rx2_c_esrd_10, rx2_c_retin_10, rx2_c_neuro_10)
 rx2_costs_life = data.table(rx2_c_ascvd_life, rx2_c_dminc_life, rx2_c_esrd_life, rx2_c_retin_life, rx2_c_neuro_life)
@@ -751,19 +757,21 @@ rx2_prod_life = data.table(rx2_p_ascvd_life, rx2_p_dminc_life, rx2_p_esrd_life, 
 
 
 # intervention costs, with placeholder 15% overhead cost
-rx1_intcosts_10 = 300*10*iters*1.15
-rx1_intcosts_life = 300*lifeexp*iters*1.15
+overhead = 0.15
+rx1_intcosts_10 = sum(300*10*(1+overhead)*(rx1_mort_events_10==0)+300*10/2*(1+overhead)*(rx1_mort_events_10==1))
+rx1_intcosts_life = sum(300*lifeexp*(1+overhead)*(rx1_mort_events_life==0)+300*lifeexp/2*(1+overhead)*(rx1_mort_events_life==1))
 
-rx2_intcosts_10 = 300*10*iters*1.15
-rx2_intcosts_life = 300*lifeexp*iters*1.15
+rx2_intcosts_10 = sum(300*10*(1+overhead)*(rx2_mort_events_10==0)+300*10/2*(1+overhead)*(rx2_mort_events_10==1))
+rx2_intcosts_life = sum(300*lifeexp*(1+overhead)*(rx2_mort_events_life==0)+300*lifeexp/2*(1+overhead)*(rx2_mort_events_life==1))
+
 
 # economic benefits from intervention, placeholder $50 per person per year net increase benefit to farms
-rx1_econben_10 =50*10*iters
-rx1_econben_life =50*lifeexp*iters
+econben = 50
+rx1_econben_10 =sum(econben*10*(rx1_mort_events_10==0)+econben*10/2*(rx1_mort_events_10==1))
+rx1_econben_life =sum(econben*lifeexp*(rx1_mort_events_life==0)+econben*lifeexp/2*(rx1_mort_events_life==1))
 
-rx2_econben_10 =50*10*iters
-rx2_econben_life =50*lifeexp*iters
-
+rx2_econben_10 =sum(econben*10*(rx2_mort_events_10==0)+econben*10/2*(rx2_mort_events_10==1))
+rx2_econben_life =sum(econben*lifeexp*(rx2_mort_events_life==0)+econben*lifeexp/2*(rx2_mort_events_life==1))
 
 ```
 
