@@ -5,6 +5,7 @@ date: "2/15/2019"
 output: html_document
 ---
 
+
 ```{r setup, include=FALSE}
 
 # install.packages('nhanesA', repos = "https://cran.rstudio.com")
@@ -26,7 +27,7 @@ Sanjay Basu*, Seth Berkowitz
 
 ``` {r load data, subset to eligible population}
 load('merged.RData')
-mergedt$eligible = ((mergedt$INDFMPIR<2) | (mergedt$HIQ031D==17))
+mergedt$eligible = ((mergedt$INDFMPIR<2) | (mergedt$HIQ031D==17))& (mergedt$BMXBMI>=25)
 table(mergedt$eligible)
 mergedsub = mergedt[which(mergedt$eligible==1),]
 
@@ -350,28 +351,28 @@ Hazard Ratio for all-cause mortality for 20% change in diet quality1: 0.83 (95%C
 
 
 # input pars
-iters=length(ascvd_10)
-set.seed(1)
-hr_ascvd = rnorm(iters, 1-0.91, (0.91-0.84)/1.96)/.2
+popl=length(ascvd_10)
+set.seed(iter*1)
+hr_ascvd = rnorm(popl, 1-0.91, (0.91-0.84)/1.96)/.2
 hr_ascvd[hr_ascvd<0]=0
-set.seed(2)
-hr_dminc = rnorm(iters, 1-0.84, (0.84-0.78)/1.96)/.1
+set.seed(iter*2)
+hr_dminc = rnorm(popl, 1-0.84, (0.84-0.78)/1.96)/.1
 hr_dminc[hr_dminc<0]=0
-set.seed(3)
-delta_a1c = rnorm(iters, 0.32, (0.32-0.23)/1.96)/.1
+set.seed(iter*3)
+delta_a1c = rnorm(popl, 0.32, (0.32-0.23)/1.96)/.1
 delta_a1c[delta_a1c<0]=0
 # appendix to doi:10.1001/jamainternmed.2014.2894
 # change in microvasc per 1% change in a1c
 hr_renal = 1-1/1.14/.9
 hr_neuro = 1-1/1.19/.9
 hr_retin = 1-1/1.29/.9
-set.seed(4)
-hr_allmort = rnorm(iters, 1-0.83, (0.83-0.78)/1.96)/.2
+set.seed(iter*4)
+hr_allmort = rnorm(popl, 1-0.83, (0.83-0.78)/1.96)/.2
 hr_allmort[hr_allmort<0]=0
 
 # rx effect 1
-set.seed(5)
-rx1_heidelta = rnorm(iters,0.13,(.13-.09)/1.96)
+set.seed(iter*5)
+rx1_heidelta = rnorm(popl,0.13,(.13-.09)/1.96)
 rx1_heidelta[rx1_heidelta<0]=0
 rx1_ascvd_10 = (1-rx1_heidelta*hr_ascvd)*ascvd_10
 rx1_ascvd_life = (1-rx1_heidelta*hr_ascvd)*ascvd_life
@@ -391,8 +392,8 @@ rx1_dminc_rate = -log(1-rx1_dminc_10)/10
 rx1_dminc_life = 1-exp(-rx1_dminc_rate*lifeexp)
 
 # rx effect 2
-set.seed(6)
-rx2_heidelta = rnorm(iters,0.07,(.07-.03)/1.96) 
+set.seed(iter*6)
+rx2_heidelta = rnorm(popl,0.07,(.07-.03)/1.96) 
 rx2_heidelta[rx2_heidelta<0]=0
 rx2_ascvd_10 = (1-rx2_heidelta*hr_ascvd)*ascvd_10
 rx2_ascvd_life = (1-rx2_heidelta*hr_ascvd)*ascvd_life
@@ -417,34 +418,34 @@ rx2_dminc_life = 1-exp(-rx2_dminc_rate*lifeexp)
 # translate into QALYs, 10year and lifetime
 ```{r QALYS lost at baseline}
 
-set.seed(7)
-ascvd_events_10 = rbinom(iters, 1, ascvd_10)
-set.seed(8)
-ascvd_events_life = rbinom(iters, 1, ascvd_life)
-set.seed(9)
-dminc_events_10 = rbinom(iters, 1, dminc_10)*(dm==0)
-set.seed(10)
-dminc_events_life = rbinom(iters, 1, dminc_life)*(dm==0)
-set.seed(11)
-dminter_10 = rbinom(iters,1,1-exp(-dminc_rate*10/2))
-set.seed(12)
-dminter_life = rbinom(iters,1,1-exp(-dminc_rate*lifeexp/2))
-set.seed(13)
-esrd_events_10 = rbinom(iters, 1, esrdrisk_10)*(dm==1 | dminter_10==1)
-set.seed(14)
-esrd_events_life = rbinom(iters, 1, esrdrisk_life)*(dm==1 | dminter_life==1)
-set.seed(15)
-retin_events_10 = rbinom(iters, 1, retinrisk_10)*(dm==1 | dminter_10==1)
-set.seed(16)
-retin_events_life = rbinom(iters, 1, retinrisk_life)*(dm==1 | dminter_life==1)
-set.seed(17)
-neuro_events_10 = rbinom(iters, 1, neurorisk_10)*(dm==1 | dminter_10==1)
-set.seed(18)
-neuro_events_life = rbinom(iters, 1, neurorisk_life)*(dm==1 | dminter_life==1)
-set.seed(19)
-mort_events_10 = rbinom(iters, 1, mortrisk_10)
-set.seed(20)
-mort_events_life = rbinom(iters, 1, mortrisk_life)
+set.seed(iter*7)
+ascvd_events_10 = rbinom(popl, 1, ascvd_10)
+set.seed(iter*8)
+ascvd_events_life = rbinom(popl, 1, ascvd_life)
+set.seed(iter*9)
+dminc_events_10 = rbinom(popl, 1, dminc_10)*(dm==0)
+set.seed(iter*10)
+dminc_events_life = rbinom(popl, 1, dminc_life)*(dm==0)
+set.seed(iter*11)
+dminter_10 = rbinom(popl,1,1-exp(-dminc_rate*10/2))
+set.seed(iter*12)
+dminter_life = rbinom(popl,1,1-exp(-dminc_rate*lifeexp/2))
+set.seed(iter*13)
+esrd_events_10 = rbinom(popl, 1, esrdrisk_10)*(dm==1 | dminter_10==1)
+set.seed(iter*14)
+esrd_events_life = rbinom(popl, 1, esrdrisk_life)*(dm==1 | dminter_life==1)
+set.seed(iter*15)
+retin_events_10 = rbinom(popl, 1, retinrisk_10)*(dm==1 | dminter_10==1)
+set.seed(iter*16)
+retin_events_life = rbinom(popl, 1, retinrisk_life)*(dm==1 | dminter_life==1)
+set.seed(iter*17)
+neuro_events_10 = rbinom(popl, 1, neurorisk_10)*(dm==1 | dminter_10==1)
+set.seed(iter*18)
+neuro_events_life = rbinom(popl, 1, neurorisk_life)*(dm==1 | dminter_life==1)
+set.seed(iter*19)
+mort_events_10 = rbinom(popl, 1, mortrisk_10)
+set.seed(iter*20)
+mort_events_life = rbinom(popl, 1, mortrisk_life)
 
 # Salomon et al., Lancet 2012; 380: 2129–43
 # Disease event,	Estimated disutility on scale of 0 to 1 (95% CI)
@@ -454,16 +455,16 @@ mort_events_life = rbinom(iters, 1, mortrisk_life)
 # Retinopathy	0.20 (0.10, 0.40)
 # Neuropathy	0.10 (0.05, 0.20)
 
-set.seed(21)
-d_ascvd = rnorm(iters,.28,(.28-.06)/1.96)
+set.seed(iter*21)
+d_ascvd = rnorm(popl,.28,(.28-.06)/1.96)
 d_ascvd[d_ascvd<0]=0
-d_dminc = rnorm(iters,.01,.01/1.96)
+d_dminc = rnorm(popl,.01,.01/1.96)
 d_dminc[d_dminc<0]=0
-d_esrd = rnorm(iters,.57,(.57-.4)/1.96)
+d_esrd = rnorm(popl,.57,(.57-.4)/1.96)
 d_esrd[d_esrd<0]=0
-d_retin = rnorm(iters,.2,(.2-.1)/1.96)
+d_retin = rnorm(popl,.2,(.2-.1)/1.96)
 d_retin[d_retin<0]=0
-d_neuro = rnorm(iters,.1,(.1-.05)/1.96)
+d_neuro = rnorm(popl,.1,(.1-.05)/1.96)
 d_neuro[d_neuro<0]=0
 
 # QALYS lost
@@ -497,34 +498,34 @@ qalys_life = data.table(q_ascvd_life, q_dminc_life, q_esrd_life, q_retin_life, q
 
 # QALYS lost under treatment 1
 
-set.seed(7)
-rx1_ascvd_events_10 = rbinom(iters, 1, rx1_ascvd_10)
-set.seed(8)
-rx1_ascvd_events_life = rbinom(iters, 1, rx1_ascvd_life)
-set.seed(9)
-rx1_dminc_events_10 = rbinom(iters, 1, rx1_dminc_10)*(dm==0)
-set.seed(10)
-rx1_dminc_events_life = rbinom(iters, 1, rx1_dminc_life)*(dm==0)
-set.seed(11)
-rx1_dminter_10 = rbinom(iters,1,1-exp(-rx1_dminc_rate*10/2))
-set.seed(12)
-rx1_dminter_life = rbinom(iters,1,1-exp(-rx1_dminc_rate*lifeexp/2))
-set.seed(13)
-rx1_esrd_events_10 = rbinom(iters, 1, rx1_esrdrisk_10)*(dm==1 | rx1_dminter_10==1)
-set.seed(14)
-rx1_esrd_events_life = rbinom(iters, 1, rx1_esrdrisk_life)*(dm==1 | rx1_dminter_life==1)
-set.seed(15)
-rx1_retin_events_10 = rbinom(iters, 1, rx1_retinrisk_10)*(dm==1 | rx1_dminter_10==1)
-set.seed(16)
-rx1_retin_events_life = rbinom(iters, 1, rx1_retinrisk_life)*(dm==1 | rx1_dminter_life==1)
-set.seed(17)
-rx1_neuro_events_10 = rbinom(iters, 1, rx1_neurorisk_10)*(dm==1 | rx1_dminter_10==1)
-set.seed(18)
-rx1_neuro_events_life = rbinom(iters, 1, rx1_neurorisk_life)*(dm==1 | rx1_dminter_life==1)
-set.seed(19)
-rx1_mort_events_10 = rbinom(iters, 1, rx1_allmort_10)
-set.seed(20)
-rx1_mort_events_life = rbinom(iters, 1, rx1_allmort_life)
+set.seed(iter*7)
+rx1_ascvd_events_10 = rbinom(popl, 1, rx1_ascvd_10)
+set.seed(iter*8)
+rx1_ascvd_events_life = rbinom(popl, 1, rx1_ascvd_life)
+set.seed(iter*9)
+rx1_dminc_events_10 = rbinom(popl, 1, rx1_dminc_10)*(dm==0)
+set.seed(iter*10)
+rx1_dminc_events_life = rbinom(popl, 1, rx1_dminc_life)*(dm==0)
+set.seed(iter*11)
+rx1_dminter_10 = rbinom(popl,1,1-exp(-rx1_dminc_rate*10/2))
+set.seed(iter*12)
+rx1_dminter_life = rbinom(popl,1,1-exp(-rx1_dminc_rate*lifeexp/2))
+set.seed(iter*13)
+rx1_esrd_events_10 = rbinom(popl, 1, rx1_esrdrisk_10)*(dm==1 | rx1_dminter_10==1)
+set.seed(iter*14)
+rx1_esrd_events_life = rbinom(popl, 1, rx1_esrdrisk_life)*(dm==1 | rx1_dminter_life==1)
+set.seed(iter*15)
+rx1_retin_events_10 = rbinom(popl, 1, rx1_retinrisk_10)*(dm==1 | rx1_dminter_10==1)
+set.seed(iter*16)
+rx1_retin_events_life = rbinom(popl, 1, rx1_retinrisk_life)*(dm==1 | rx1_dminter_life==1)
+set.seed(iter*17)
+rx1_neuro_events_10 = rbinom(popl, 1, rx1_neurorisk_10)*(dm==1 | rx1_dminter_10==1)
+set.seed(iter*18)
+rx1_neuro_events_life = rbinom(popl, 1, rx1_neurorisk_life)*(dm==1 | rx1_dminter_life==1)
+set.seed(iter*19)
+rx1_mort_events_10 = rbinom(popl, 1, rx1_allmort_10)
+set.seed(iter*20)
+rx1_mort_events_life = rbinom(popl, 1, rx1_allmort_life)
 
 
 # QALYS lost
@@ -558,34 +559,34 @@ rx1_qalys_life = data.table(rx1_q_ascvd_life, rx1_q_dminc_life, rx1_q_esrd_life,
 
 # QALYS lost under treatment 2
 
-set.seed(7)
-rx2_ascvd_events_10 = rbinom(iters, 1, rx2_ascvd_10)
-set.seed(8)
-rx2_ascvd_events_life = rbinom(iters, 1, rx2_ascvd_life)
-set.seed(9)
-rx2_dminc_events_10 = rbinom(iters, 1, rx2_dminc_10)*(dm==0)
-set.seed(10)
-rx2_dminc_events_life = rbinom(iters, 1, rx2_dminc_life)*(dm==0)
-set.seed(11)
-rx2_dminter_10 = rbinom(iters,1,1-exp(-rx2_dminc_rate*10/2))
-set.seed(12)
-rx2_dminter_life = rbinom(iters,1,1-exp(-rx2_dminc_rate*lifeexp/2))
-set.seed(13)
-rx2_esrd_events_10 = rbinom(iters, 1, rx2_esrdrisk_10)*(dm==1 | rx2_dminter_10==1)
-set.seed(14)
-rx2_esrd_events_life = rbinom(iters, 1, rx2_esrdrisk_life)*(dm==1 | rx2_dminter_life==1)
-set.seed(15)
-rx2_retin_events_10 = rbinom(iters, 1, rx2_retinrisk_10)*(dm==1 | rx2_dminter_10==1)
-set.seed(16)
-rx2_retin_events_life = rbinom(iters, 1, rx2_retinrisk_life)*(dm==1 | rx2_dminter_life==1)
-set.seed(17)
-rx2_neuro_events_10 = rbinom(iters, 1, rx2_neurorisk_10)*(dm==1 | rx2_dminter_10==1)
-set.seed(18)
-rx2_neuro_events_life = rbinom(iters, 1, rx2_neurorisk_life)*(dm==1 | rx2_dminter_life==1)
-set.seed(19)
-rx2_mort_events_10 = rbinom(iters, 1, rx2_allmort_10)
-set.seed(20)
-rx2_mort_events_life = rbinom(iters, 1, rx2_allmort_life)
+set.seed(iter*7)
+rx2_ascvd_events_10 = rbinom(popl, 1, rx2_ascvd_10)
+set.seed(iter*8)
+rx2_ascvd_events_life = rbinom(popl, 1, rx2_ascvd_life)
+set.seed(iter*9)
+rx2_dminc_events_10 = rbinom(popl, 1, rx2_dminc_10)*(dm==0)
+set.seed(iter*10)
+rx2_dminc_events_life = rbinom(popl, 1, rx2_dminc_life)*(dm==0)
+set.seed(iter*11)
+rx2_dminter_10 = rbinom(popl,1,1-exp(-rx2_dminc_rate*10/2))
+set.seed(iter*12)
+rx2_dminter_life = rbinom(popl,1,1-exp(-rx2_dminc_rate*lifeexp/2))
+set.seed(iter*13)
+rx2_esrd_events_10 = rbinom(popl, 1, rx2_esrdrisk_10)*(dm==1 | rx2_dminter_10==1)
+set.seed(iter*14)
+rx2_esrd_events_life = rbinom(popl, 1, rx2_esrdrisk_life)*(dm==1 | rx2_dminter_life==1)
+set.seed(iter*15)
+rx2_retin_events_10 = rbinom(popl, 1, rx2_retinrisk_10)*(dm==1 | rx2_dminter_10==1)
+set.seed(iter*16)
+rx2_retin_events_life = rbinom(popl, 1, rx2_retinrisk_life)*(dm==1 | rx2_dminter_life==1)
+set.seed(iter*17)
+rx2_neuro_events_10 = rbinom(popl, 1, rx2_neurorisk_10)*(dm==1 | rx2_dminter_10==1)
+set.seed(iter*18)
+rx2_neuro_events_life = rbinom(popl, 1, rx2_neurorisk_life)*(dm==1 | rx2_dminter_life==1)
+set.seed(iter*19)
+rx2_mort_events_10 = rbinom(popl, 1, rx2_allmort_10)
+set.seed(iter*20)
+rx2_mort_events_life = rbinom(popl, 1, rx2_allmort_life)
 
 
 # QALYS lost
@@ -626,20 +627,20 @@ rx2_qalys_life = data.table(rx2_q_ascvd_life, rx2_q_dminc_life, rx2_q_esrd_life,
 # $26,174 for each case of retinopathy (95% CI: $25,578, $26,769)
 # $48,432 for each case of neuropathy (95% CI: $46,470, $50,393)
 
-set.seed(21)
-c_ascvd = rnorm(iters,61614,(61614-61095)/1.96)
+set.seed(iter*21)
+c_ascvd = rnorm(popl,61614,(61614-61095)/1.96)
 c_ascvd[c_ascvd<0]=0
-set.seed(22)
-c_dminc = rnorm(iters,22526,(22526-21919)/1.96)
+set.seed(iter*22)
+c_dminc = rnorm(popl,22526,(22526-21919)/1.96)
 c_dminc[c_dminc<0]=0
-set.seed(23)
-c_esrd = rnorm(iters,293490,(293490-290584)/1.96)
+set.seed(iter*23)
+c_esrd = rnorm(popl,293490,(293490-290584)/1.96)
 c_esrd[c_esrd<0]=0
-set.seed(24)
-c_retin = rnorm(iters,26174,(26174-25578)/1.96)
+set.seed(iter*24)
+c_retin = rnorm(popl,26174,(26174-25578)/1.96)
 c_retin[c_retin<0]=0
-set.seed(25)
-c_neuro = rnorm(iters,48432,(48432-46470)/1.96)
+set.seed(iter*25)
+c_neuro = rnorm(popl,48432,(48432-46470)/1.96)
 c_neuro[c_neuro<0]=0
 
 
@@ -697,12 +698,12 @@ rx2_costs_life = data.table(rx2_c_ascvd_life, rx2_c_dminc_life, rx2_c_esrd_life,
 # 1 	Song X, Quek RGW, Gandra SR, Cappell KA, Fowler R, Cong Z. Productivity loss and indirect costs associated with cardiovascular events and related clinical procedures. BMC Health Serv Res. 2015;15:245. doi:10.1186/s12913-015-0925-x
 # 2. 	Ng YC, Jacobs P, Johnson JA. Productivity losses associated with diabetes in the US. Diabetes Care. 2001;24(2):257-261. doi:10.2337/DIACARE.24.2.257
 
-set.seed(21)
-p_ascvd = rnorm(iters,1085,(1085-521)/1.96)
+set.seed(iter*21)
+p_ascvd = rnorm(popl,1085,(1085-521)/1.96)
 p_ascvd[p_ascvd<0]=0
 p_dminc = 0
-set.seed(23)
-p_esrd = rnorm(iters,5811,(5811-2571)/1.96)
+set.seed(iter*23)
+p_esrd = rnorm(popl,5811,(5811-2571)/1.96)
 p_esrd[p_esrd<0]=0
 p_retin = p_esrd
 p_neuro = p_esrd
@@ -780,57 +781,57 @@ rx2_econben_life =sum(econben*lifeexp*(rx2_mort_events_life==0)+econben*lifeexp/
 ``` {r results tables, healthcare perspective only}
 
 # healthcare costs lost at baseline
-colSums(costs_10)/iters*10000
-sum(colSums(costs_10)/iters*10000)
-colSums(costs_life)/iters*10000
-sum(colSums(costs_life)/iters*10000)
+colSums(costs_10)/popl*10000
+sum(colSums(costs_10)/popl*10000)
+colSums(costs_life)/popl*10000
+sum(colSums(costs_life)/popl*10000)
 
 # healthcare costs lost under Rx 1
-colSums(rx1_costs_10)/iters*10000
-sum(colSums(rx1_costs_10)/iters*10000)
+colSums(rx1_costs_10)/popl*10000
+sum(colSums(rx1_costs_10)/popl*10000)
 sum(rx1_intcosts_10)
-colSums(rx1_costs_life)/iters*10000
-sum(colSums(rx1_costs_life)/iters*10000)
+colSums(rx1_costs_life)/popl*10000
+sum(colSums(rx1_costs_life)/popl*10000)
 sum(rx1_intcosts_life)
 
 # healthcare costs lost under Rx 2
-colSums(rx2_costs_10)/iters*10000
-sum(colSums(rx2_costs_10)/iters*10000)
+colSums(rx2_costs_10)/popl*10000
+sum(colSums(rx2_costs_10)/popl*10000)
 sum(rx2_intcosts_10)
-colSums(rx2_costs_life)/iters*10000
-sum(colSums(rx2_costs_life)/iters*10000)
+colSums(rx2_costs_life)/popl*10000
+sum(colSums(rx2_costs_life)/popl*10000)
 sum(rx2_intcosts_life)
 
 # QALYS lost at baseline
-colSums(qalys_10)/iters*10000
-sum(colSums(qalys_10)/iters*10000)
-colSums(qalys_life)/iters*10000
-sum(colSums(qalys_life)/iters*10000)
+colSums(qalys_10)/popl*10000
+sum(colSums(qalys_10)/popl*10000)
+colSums(qalys_life)/popl*10000
+sum(colSums(qalys_life)/popl*10000)
 
 # QALYS lost under Rx 1
-colSums(rx1_qalys_10)/iters*10000
-sum(colSums(rx1_qalys_10)/iters*10000)
-colSums(rx1_qalys_life)/iters*10000
-sum(colSums(rx1_qalys_life)/iters*10000)
+colSums(rx1_qalys_10)/popl*10000
+sum(colSums(rx1_qalys_10)/popl*10000)
+colSums(rx1_qalys_life)/popl*10000
+sum(colSums(rx1_qalys_life)/popl*10000)
 
 # QALYS lost under Rx 2
-colSums(rx2_qalys_10)/iters*10000
-sum(colSums(rx2_qalys_10)/iters*10000)
-colSums(rx2_qalys_life)/iters*10000
-sum(colSums(rx2_qalys_life)/iters*10000)
+colSums(rx2_qalys_10)/popl*10000
+sum(colSums(rx2_qalys_10)/popl*10000)
+colSums(rx2_qalys_life)/popl*10000
+sum(colSums(rx2_qalys_life)/popl*10000)
 
 
 # ICER of Rx 1 healthcare
-(sum((sum(rx1_costs_10)+rx1_intcosts_10)/iters*10000)-sum(sum(costs_10)/iters*10000))/
-  (sum(sum(rx1_qalys_10)/iters*10000)-sum(sum(qalys_10)/iters*10000))
-(sum((sum(rx1_costs_life)+rx1_intcosts_life)/iters*10000)-sum(sum(costs_life)/iters*10000))/
-  (sum(sum(rx1_qalys_life)/iters*10000)-sum(sum(qalys_life)/iters*10000))
+(sum((sum(rx1_costs_10)+rx1_intcosts_10)/popl*10000)-sum(sum(costs_10)/popl*10000))/
+  (sum(sum(rx1_qalys_10)/popl*10000)-sum(sum(qalys_10)/popl*10000))
+(sum((sum(rx1_costs_life)+rx1_intcosts_life)/popl*10000)-sum(sum(costs_life)/popl*10000))/
+  (sum(sum(rx1_qalys_life)/popl*10000)-sum(sum(qalys_life)/popl*10000))
 
 # ICER of Rx 2 healthcare
-(sum((sum(rx2_costs_10)+rx2_intcosts_10)/iters*10000)-sum(sum(costs_10)/iters*10000))/
-  (sum(sum(rx2_qalys_10)/iters*10000)-sum(sum(qalys_10)/iters*10000))
-(sum((sum(rx2_costs_life)+rx2_intcosts_life)/iters*10000)-sum(sum(costs_life)/iters*10000))/
-  (sum(sum(rx2_qalys_life)/iters*10000)-sum(sum(qalys_life)/iters*10000))
+(sum((sum(rx2_costs_10)+rx2_intcosts_10)/popl*10000)-sum(sum(costs_10)/popl*10000))/
+  (sum(sum(rx2_qalys_10)/popl*10000)-sum(sum(qalys_10)/popl*10000))
+(sum((sum(rx2_costs_life)+rx2_intcosts_life)/popl*10000)-sum(sum(costs_life)/popl*10000))/
+  (sum(sum(rx2_qalys_life)/popl*10000)-sum(sum(qalys_life)/popl*10000))
 
 ```
 
@@ -839,41 +840,42 @@ sum(colSums(rx2_qalys_life)/iters*10000)
 ``` {r results tables, societal perspective}
 
 #  prod costs lost at baseline
-colSums(prod_10)/iters*10000
-sum(colSums(prod_10)/iters*10000)
-colSums(prod_life)/iters*10000
-sum(colSums(prod_life)/iters*10000)
+colSums(prod_10)/popl*10000
+sum(colSums(prod_10)/popl*10000)
+colSums(prod_life)/popl*10000
+sum(colSums(prod_life)/popl*10000)
 
 #  prod costs lost under Rx 1
-colSums(rx1_prod_10)/iters*10000
-sum(colSums(rx1_prod_10)/iters*10000)
-colSums(rx1_prod_life)/iters*10000
-sum(colSums(rx1_prod_life)/iters*10000)
+colSums(rx1_prod_10)/popl*10000
+sum(colSums(rx1_prod_10)/popl*10000)
+colSums(rx1_prod_life)/popl*10000
+sum(colSums(rx1_prod_life)/popl*10000)
 
 #  prod costs lost under Rx 2
-colSums(rx2_prod_10)/iters*10000
-sum(colSums(rx2_prod_10)/iters*10000)
-colSums(rx2_prod_life)/iters*10000
-sum(colSums(rx2_prod_life)/iters*10000)
+colSums(rx2_prod_10)/popl*10000
+sum(colSums(rx2_prod_10)/popl*10000)
+colSums(rx2_prod_life)/popl*10000
+sum(colSums(rx2_prod_life)/popl*10000)
 
 # econ gains under Rx 1
-sum((rx1_econben_10)/iters*10000)
-sum((rx1_econben_life)/iters*10000)
+sum((rx1_econben_10)/popl*10000)
+sum((rx1_econben_life)/popl*10000)
 
 # econ gains under Rx 2
-sum((rx2_econben_10)/iters*10000)
-sum((rx2_econben_life)/iters*10000)
+sum((rx2_econben_10)/popl*10000)
+sum((rx2_econben_life)/popl*10000)
 
 
 # ICER of Rx 1 societal
-((sum(sum(rx1_costs_10+rx1_prod_10)+rx1_intcosts_10-rx1_econben_10)/iters*10000)-sum(sum(costs_10+prod_10)/iters*10000))/(sum(sum(rx1_qalys_10)/iters*10000)-sum(sum(qalys_10)/iters*10000))
-((sum(sum(rx1_costs_life+rx1_prod_life)+rx1_intcosts_life-rx1_econben_life)/iters*10000)-sum(sum(costs_life+prod_life)/iters*10000))/(sum(sum(rx1_qalys_life)/iters*10000)-sum(sum(qalys_life)/iters*10000))
+((sum(sum(rx1_costs_10+rx1_prod_10)+rx1_intcosts_10-rx1_econben_10)/popl*10000)-sum(sum(costs_10+prod_10)/popl*10000))/(sum(sum(rx1_qalys_10)/popl*10000)-sum(sum(qalys_10)/popl*10000))
+((sum(sum(rx1_costs_life+rx1_prod_life)+rx1_intcosts_life-rx1_econben_life)/popl*10000)-sum(sum(costs_life+prod_life)/popl*10000))/(sum(sum(rx1_qalys_life)/popl*10000)-sum(sum(qalys_life)/popl*10000))
 
 # ICER of Rx 2 societal
-((sum(sum(rx2_costs_10+rx2_prod_10)+rx2_intcosts_10-rx2_econben_10)/iters*10000)-sum(sum(costs_10+prod_10)/iters*10000))/(sum(sum(rx2_qalys_10)/iters*10000)-sum(sum(qalys_10)/iters*10000))
-((sum(sum(rx2_costs_life+rx2_prod_life)+rx2_intcosts_life-rx2_econben_life)/iters*10000)-sum(sum(costs_life+prod_life)/iters*10000))/(sum(sum(rx2_qalys_life)/iters*10000)-sum(sum(qalys_life)/iters*10000))
+((sum(sum(rx2_costs_10+rx2_prod_10)+rx2_intcosts_10-rx2_econben_10)/popl*10000)-sum(sum(costs_10+prod_10)/popl*10000))/(sum(sum(rx2_qalys_10)/popl*10000)-sum(sum(qalys_10)/popl*10000))
+((sum(sum(rx2_costs_life+rx2_prod_life)+rx2_intcosts_life-rx2_econben_life)/popl*10000)-sum(sum(costs_life+prod_life)/popl*10000))/(sum(sum(rx2_qalys_life)/popl*10000)-sum(sum(qalys_life)/popl*10000))
 
 ```
+
 
 # sensitivity analysis to see what overhead rate represents the 'break-even' between cash and CSA (i.e. how cheap does the CSA have to run to offset the extra overhead)
 
