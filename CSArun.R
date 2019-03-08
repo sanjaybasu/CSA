@@ -1,6 +1,6 @@
 
 CSArun <- function(iter) {
-  setwd("~/Documents/Epi/Research/SDH/CSA")
+  setwd("~/Documents/OneDrive - Leland Stanford Junior University/Documents/Epi/Research/SDH/CSA")
   load('merged.RData')
   mergedt$eligible = ((mergedt$INDFMPIR<2) | (mergedt$HIQ031D==17)) & (mergedt$BMXBMI>=25)
   table(mergedt$eligible)
@@ -647,23 +647,16 @@ CSArun <- function(iter) {
   
   library(fBasics)
   library(matrixStats)
-  out_baseline_10 = rowQuantiles(as.matrix(rbind(ascvd_10,dminc_10,esrdrisk_10,neurorisk_10,retinrisk_10)),probs=c(.025,.5,.975))
-  out_rx1_10 = rowQuantiles(as.matrix(rbind(rx1_ascvd_10,rx1_dminc_10,rx1_esrdrisk_10,rx1_neurorisk_10,rx1_retinrisk_10)),probs=c(.025,.5,.975))
-  out_rx2_10 = rowQuantiles(as.matrix(rbind(rx2_ascvd_10,rx2_dminc_10,rx2_esrdrisk_10,rx2_neurorisk_10,rx2_retinrisk_10)),probs=c(.025,.5,.975))
-
-  out_baseline_life = rowQuantiles(as.matrix(rbind(ascvd_life,dminc_life,esrdrisk_life,neurorisk_life,retinrisk_life)),probs=c(.025,.5,.975))
-  out_rx1_life = rowQuantiles(as.matrix(rbind(rx1_ascvd_life,rx1_dminc_life,rx1_esrdrisk_life,rx1_neurorisk_life,rx1_retinrisk_life)),probs=c(.025,.5,.975))
-  out_rx2_life = rowQuantiles(as.matrix(rbind(rx2_ascvd_life,rx2_dminc_life,rx2_esrdrisk_life,rx2_neurorisk_life,rx2_retinrisk_life)),probs=c(.025,.5,.975))
-    
-  events_baseline_10 = rowSums(as.matrix(rbind(ascvd_events_10,dminc_events_10,esrd_events_10,neuro_events_10,retin_events_10)))/popl*10000
-  events_rx1_10 = rowSums(as.matrix(rbind(rx1_ascvd_events_10,rx1_dminc_events_10,rx1_esrd_events_10,rx1_neuro_events_10,rx1_retin_events_10)))/popl*10000
-  events_rx2_10 = rowSums(as.matrix(rbind(rx2_ascvd_events_10,rx2_dminc_events_10,rx2_esrd_events_10,rx2_neuro_events_10,rx2_retin_events_10)))/popl*10000
-  
-  events_baseline_life = rowSums(as.matrix(rbind(ascvd_events_life,dminc_events_life,esrd_events_life,neuro_events_life,retin_events_life)))/popl*10000
-  events_rx1_life = rowSums(as.matrix(rbind(rx1_ascvd_events_life,rx1_dminc_events_life,rx1_esrd_events_life,rx1_neuro_events_life,rx1_retin_events_life)))/popl*10000
-  events_rx2_life = rowSums(as.matrix(rbind(rx2_ascvd_events_life,rx2_dminc_events_life,rx2_esrd_events_life,rx2_neuro_events_life,rx2_retin_events_life)))/popl*10000
-  
-  
+  # out_baseline_10 = rowQuantiles(as.matrix(rbind(ascvd_10,dminc_10,esrdrisk_10,neurorisk_10,retinrisk_10, mortrisk_10)),probs=c(.025,.5,.975))
+  # out_rx1_10 = rowQuantiles(as.matrix(rbind(rx1_ascvd_10,rx1_dminc_10,rx1_esrdrisk_10,rx1_neurorisk_10,rx1_retinrisk_10, rx1_allmort_10)),probs=c(.025,.5,.975))
+  # out_rx2_10 = rowQuantiles(as.matrix(rbind(rx2_ascvd_10,rx2_dminc_10,rx2_esrdrisk_10,rx2_neurorisk_10,rx2_retinrisk_10, rx2_allmort_10)),probs=c(.025,.5,.975))
+  # 
+  # out_baseline_life = rowQuantiles(as.matrix(rbind(ascvd_life,dminc_life,esrdrisk_life,neurorisk_life,retinrisk_life, mortrisk_life)),probs=c(.025,.5,.975))
+  # out_rx1_life = rowQuantiles(as.matrix(rbind(rx1_ascvd_life,rx1_dminc_life,rx1_esrdrisk_life,rx1_neurorisk_life,rx1_retinrisk_life, rx1_allmort_life)),probs=c(.025,.5,.975))
+  # out_rx2_life = rowQuantiles(as.matrix(rbind(rx2_ascvd_life,rx2_dminc_life,rx2_esrdrisk_life,rx2_neurorisk_life,rx2_retinrisk_life, rx2_allmort_life)),probs=c(.025,.5,.975))
+  #   
+  # 
+  # 
   # return(list(out_base_10 = out_baseline_10,
   #             out_rx1_10 = out_rx1_10,
   #             out_rx2_10 = out_rx2_10,
@@ -672,31 +665,50 @@ CSArun <- function(iter) {
   #             out_rx2_life = out_rx2_life))
   
   
-  
+  # events_baseline_10 = rowSums(as.matrix(rbind(ascvd_events_10,dminc_events_10,esrd_events_10,neuro_events_10,retin_events_10, mort_events_10)))/popl*10000
+  # events_rx1_10 = rowSums(as.matrix(rbind(rx1_ascvd_events_10,rx1_dminc_events_10,rx1_esrd_events_10,rx1_neuro_events_10,rx1_retin_events_10, rx1_mort_events_10)))/popl*10000
+  # events_rx2_10 = rowSums(as.matrix(rbind(rx2_ascvd_events_10,rx2_dminc_events_10,rx2_esrd_events_10,rx2_neuro_events_10,rx2_retin_events_10, rx2_mort_events_10)))/popl*10000
+  # 
+  # events_baseline_life = rowSums(as.matrix(rbind(ascvd_events_life,dminc_events_life,esrd_events_life,neuro_events_life,retin_events_life, mort_events_life)))/popl*10000
+  # events_rx1_life = rowSums(as.matrix(rbind(rx1_ascvd_events_life,rx1_dminc_events_life,rx1_esrd_events_life,rx1_neuro_events_life,rx1_retin_events_life, rx1_allmort_life)))/popl*10000
+  # events_rx2_life = rowSums(as.matrix(rbind(rx2_ascvd_events_life,rx2_dminc_events_life,rx2_esrd_events_life,rx2_neuro_events_life,rx2_retin_events_life, rx2_allmort_life)))/popl*10000
+  # 
   # eventstab = data.table(events_baseline_10,events_rx1_10,events_rx2_10,events_baseline_life,events_rx1_life,events_rx2_life)
   # rx1_deltatab_10 = eventstab[,2]-eventstab[,1]
   # rx1_deltatab_life = eventstab[,5]-eventstab[,4]
   # rx2_deltatab_10 = eventstab[,3]-eventstab[,1]
   # rx2_deltatab_life = eventstab[,6]-eventstab[,4]
-  # rx1_deltatab_10[rx1_deltatab_10>0]=mean(rx1_deltatab_10)
-  # rx1_deltatab_life[rx1_deltatab_life>0]=mean(rx1_deltatab_life)
-  # rx2_deltatab_10[rx2_deltatab_10>0]=mean(rx2_deltatab_10)
-  # rx2_deltatab_life[rx2_deltatab_life>0]=mean(rx2_deltatab_life)
-  # 
+
+
   # output = cbind(rx1_deltatab_10,rx1_deltatab_life,rx2_deltatab_10,rx2_deltatab_life)
   # output2 = matrix(unlist(output),ncol=4,byrow=F)
   # return(output2)
   
-  out_q_10 = colSums(qalys_10)/popl*10000
-  rx1_out_q_10 = colSums(rx1_qalys_10)/popl*10000
-  rx2_out_q_10 = colSums(rx2_qalys_10)/popl*10000
+  # out_q_10 = colSums(qalys_10)/popl*10000
+  # rx1_out_q_10 = colSums(rx1_qalys_10)/popl*10000
+  # rx2_out_q_10 = colSums(rx2_qalys_10)/popl*10000
+  # 
+  # out_q_life = colSums(qalys_life)/popl*10000
+  # rx1_out_q_life = colSums(rx1_qalys_life)/popl*10000
+  # rx2_out_q_life = colSums(rx2_qalys_life)/popl*10000
+  # 
+  # output = rbind(out_q_10,rx1_out_q_10,rx2_out_q_10,out_q_life,rx1_out_q_life,rx2_out_q_life)
+  # output2 = matrix(unlist(output),ncol=6,byrow=F)
+  # return(output2)
   
-  out_q_life = colSums(qalys_life)/popl*10000
-  rx1_out_q_life = colSums(rx1_qalys_life)/popl*10000
-  rx2_out_q_life = colSums(rx2_qalys_life)/popl*10000
   
-  output = rbind(out_q_10,rx1_out_q_10,rx2_out_q_10,out_q_life,rx1_out_q_life,rx2_out_q_life)
-  output2 = matrix(unlist(output),ncol=6,byrow=F)
+  out_c_10 = c(0,colSums(costs_10),0,0)/popl*10000
+  rx1_out_c_10 = c(sum(rx1_intcosts_10),colSums(rx1_costs_10),sum(rx1_econben_10),sum(rx1_prod_10))/popl*10000
+  rx2_out_c_10 = c(sum(rx2_intcosts_10),colSums(rx2_costs_10),sum(rx2_econben_10),sum(rx2_prod_10))/popl*10000
+  
+  out_c_life = c(0,colSums(costs_life),0,0)/popl*10000
+  rx1_out_c_life = c(sum(rx1_intcosts_life),colSums(rx1_costs_life),sum(rx1_econben_life),sum(rx1_prod_life))/popl*10000
+  rx2_out_c_life = c(sum(rx2_intcosts_life),colSums(rx2_costs_life),sum(rx2_econben_life),sum(rx2_prod_life))/popl*10000
+  
+  
+  output = rbind(out_c_10,rx1_out_c_10,rx2_out_c_10,out_c_life,rx1_out_c_life,rx2_out_c_life)
+  output2 = matrix(unlist(output),ncol=8,byrow=F)
   return(output2)
+  
   
 }
