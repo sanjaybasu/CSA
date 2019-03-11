@@ -1,5 +1,5 @@
 
-CSArun <- function(iter) {
+#CSArun <- function(iter) {
   setwd("~/Documents/OneDrive - Leland Stanford Junior University/Documents/Epi/Research/SDH/CSA")
   load('merged.RData')
   mergedt$eligible = ((mergedt$INDFMPIR<2) | (mergedt$HIQ031D==17)) & (mergedt$BMXBMI>=25)
@@ -695,21 +695,176 @@ CSArun <- function(iter) {
 
   output = rbind(out_q_10,rx1_out_q_10,rx2_out_q_10,out_q_life,rx1_out_q_life,rx2_out_q_life)
   output2 = matrix(unlist(output),ncol=6,byrow=F)
-  return(output2)
-  
-  
-  # out_c_10 = c(0,colSums(costs_10),0,0)/popl*10000
-  # rx1_out_c_10 = c(sum(rx1_intcosts_10),colSums(rx1_costs_10),sum(rx1_econben_10),sum(rx1_prod_10))/popl*10000
-  # rx2_out_c_10 = c(sum(rx2_intcosts_10),colSums(rx2_costs_10),sum(rx2_econben_10),sum(rx2_prod_10))/popl*10000
-  # 
-  # out_c_life = c(0,colSums(costs_life),0,0)/popl*10000
-  # rx1_out_c_life = c(sum(rx1_intcosts_life),colSums(rx1_costs_life),sum(rx1_econben_life),sum(rx1_prod_life))/popl*10000
-  # rx2_out_c_life = c(sum(rx2_intcosts_life),colSums(rx2_costs_life),sum(rx2_econben_life),sum(rx2_prod_life))/popl*10000
-  # 
-  # 
-  # output = rbind(out_c_10,rx1_out_c_10,rx2_out_c_10,out_c_life,rx1_out_c_life,rx2_out_c_life)
-  # output2 = matrix(unlist(output),ncol=8,byrow=F)
   # return(output2)
   
   
-}
+  qalytabs = output2
+  
+  base_qalys_ascvd_10 = summary(qalytabs[seq(1,dim(qalytabs)[1],6),1])
+  base_qalys_dminc_10 = summary(qalytabs[seq(1,dim(qalytabs)[1],6),2])
+  base_qalys_esrd_10 = summary(qalytabs[seq(1,dim(qalytabs)[1],6),3])
+  base_qalys_retin_10 = summary(qalytabs[seq(1,dim(qalytabs)[1],6),4])
+  base_qalys_neuro_10 = summary(qalytabs[seq(1,dim(qalytabs)[1],6),5])
+  base_qalys_allmort_10 = summary(qalytabs[seq(1,dim(qalytabs)[1],6),6])
+  base_qalys_ascvd_10+base_qalys_dminc_10+base_qalys_esrd_10+
+    base_qalys_retin_10+base_qalys_neuro_10+base_qalys_allmort_10
+  
+  rx1_qalys_ascvd_10 = summary(qalytabs[seq(2,dim(qalytabs)[1],6),1])
+  rx1_qalys_dminc_10 = summary(qalytabs[seq(2,dim(qalytabs)[1],6),2])
+  rx1_qalys_esrd_10 = summary(qalytabs[seq(2,dim(qalytabs)[1],6),3])
+  rx1_qalys_retin_10 = summary(qalytabs[seq(2,dim(qalytabs)[1],6),4])
+  rx1_qalys_neuro_10 = summary(qalytabs[seq(2,dim(qalytabs)[1],6),5])
+  rx1_qalys_allmort_10 = summary(qalytabs[seq(2,dim(qalytabs)[1],6),6])
+  rx1_qalys_ascvd_10+rx1_qalys_dminc_10+rx1_qalys_esrd_10+
+    rx1_qalys_retin_10+rx1_qalys_neuro_10+rx1_qalys_allmort_10
+  
+  rx2_qalys_ascvd_10 = summary(qalytabs[seq(3,dim(qalytabs)[1],6),1])
+  rx2_qalys_dminc_10 = summary(qalytabs[seq(3,dim(qalytabs)[1],6),2])
+  rx2_qalys_esrd_10 = summary(qalytabs[seq(3,dim(qalytabs)[1],6),3])
+  rx2_qalys_retin_10 = summary(qalytabs[seq(3,dim(qalytabs)[1],6),4])
+  rx2_qalys_neuro_10 = summary(qalytabs[seq(3,dim(qalytabs)[1],6),5])
+  rx2_qalys_allmort_10 = summary(qalytabs[seq(3,dim(qalytabs)[1],6),6])
+  rx2_qalys_ascvd_10+rx2_qalys_dminc_10+rx2_qalys_esrd_10+
+    rx2_qalys_retin_10+rx2_qalys_neuro_10+rx2_qalys_allmort_10
+  
+  base_qalys_ascvd_life = summary(qalytabs[seq(4,dim(qalytabs)[1],6),1])
+  base_qalys_dminc_life = summary(qalytabs[seq(4,dim(qalytabs)[1],6),2])
+  base_qalys_esrd_life = summary(qalytabs[seq(4,dim(qalytabs)[1],6),3])
+  base_qalys_retin_life = summary(qalytabs[seq(4,dim(qalytabs)[1],6),4])
+  base_qalys_neuro_life = summary(qalytabs[seq(4,dim(qalytabs)[1],6),5])
+  base_qalys_allmort_life = summary(qalytabs[seq(4,dim(qalytabs)[1],6),6])
+  base_qalys_ascvd_life+base_qalys_dminc_life+base_qalys_esrd_life+
+    base_qalys_retin_life+base_qalys_neuro_life+base_qalys_allmort_life
+  
+  rx1_qalys_ascvd_life = summary(qalytabs[seq(5,dim(qalytabs)[1],6),1])
+  rx1_qalys_dminc_life = summary(qalytabs[seq(5,dim(qalytabs)[1],6),2])
+  rx1_qalys_esrd_life = summary(qalytabs[seq(5,dim(qalytabs)[1],6),3])
+  rx1_qalys_retin_life = summary(qalytabs[seq(5,dim(qalytabs)[1],6),4])
+  rx1_qalys_neuro_life = summary(qalytabs[seq(5,dim(qalytabs)[1],6),5])
+  rx1_qalys_allmort_life = summary(qalytabs[seq(5,dim(qalytabs)[1],6),6])
+  rx1_qalys_ascvd_life+rx1_qalys_dminc_life+rx1_qalys_esrd_life+
+    rx1_qalys_retin_life+rx1_qalys_neuro_life+rx1_qalys_allmort_life
+  
+  rx2_qalys_ascvd_life = summary(qalytabs[seq(6,dim(qalytabs)[1],6),1])
+  rx2_qalys_dminc_life = summary(qalytabs[seq(6,dim(qalytabs)[1],6),2])
+  rx2_qalys_esrd_life = summary(qalytabs[seq(6,dim(qalytabs)[1],6),3])
+  rx2_qalys_retin_life = summary(qalytabs[seq(6,dim(qalytabs)[1],6),4])
+  rx2_qalys_neuro_life = summary(qalytabs[seq(6,dim(qalytabs)[1],6),5])
+  rx2_qalys_allmort_life = summary(qalytabs[seq(6,dim(qalytabs)[1],6),6])
+  rx2_qalys_ascvd_life+rx2_qalys_dminc_life+rx2_qalys_esrd_life+
+    rx2_qalys_retin_life+rx2_qalys_neuro_life+rx2_qalys_allmort_life
+  
+  
+  out_c_10 = c(0,colSums(costs_10),0,0)/popl*10000
+  rx1_out_c_10 = c(sum(rx1_intcosts_10),colSums(rx1_costs_10),sum(rx1_econben_10),sum(rx1_prod_10))/popl*10000
+  rx2_out_c_10 = c(sum(rx2_intcosts_10),colSums(rx2_costs_10),sum(rx2_econben_10),sum(rx2_prod_10))/popl*10000
+
+  out_c_life = c(0,colSums(costs_life),0,0)/popl*10000
+  rx1_out_c_life = c(sum(rx1_intcosts_life),colSums(rx1_costs_life),sum(rx1_econben_life),sum(rx1_prod_life))/popl*10000
+  rx2_out_c_life = c(sum(rx2_intcosts_life),colSums(rx2_costs_life),sum(rx2_econben_life),sum(rx2_prod_life))/popl*10000
+
+
+  output = rbind(out_c_10,rx1_out_c_10,rx2_out_c_10,out_c_life,rx1_out_c_life,rx2_out_c_life)
+  output2 = matrix(unlist(output),ncol=8,byrow=F)
+  # return(output2)
+  
+  costtabs = output2
+  
+  base_costs_int_10 = summary(costtabs[seq(1,dim(costtabs)[1],6),1])
+  base_costs_ascvd_10 = summary(costtabs[seq(1,dim(costtabs)[1],6),2])
+  base_costs_dminc_10 = summary(costtabs[seq(1,dim(costtabs)[1],6),3])
+  base_costs_esrd_10 = summary(costtabs[seq(1,dim(costtabs)[1],6),4])
+  base_costs_retin_10 = summary(costtabs[seq(1,dim(costtabs)[1],6),5])
+  base_costs_neuro_10 = summary(costtabs[seq(1,dim(costtabs)[1],6),6])
+  base_costs_ag_10 = summary(costtabs[seq(1,dim(costtabs)[1],6),7])
+  base_costs_prod_10 = summary(costtabs[seq(1,dim(costtabs)[1],6),8])
+  
+  base_costs_int_10+base_costs_ascvd_10+base_costs_dminc_10+base_costs_esrd_10+
+    base_costs_retin_10+base_costs_neuro_10
+  base_costs_ag_10+base_costs_prod_10
+  
+  rx1_costs_int_10 = summary(costtabs[seq(2,dim(costtabs)[1],6),1])
+  rx1_costs_ascvd_10 = summary(costtabs[seq(2,dim(costtabs)[1],6),2])
+  rx1_costs_dminc_10 = summary(costtabs[seq(2,dim(costtabs)[1],6),3])
+  rx1_costs_esrd_10 = summary(costtabs[seq(2,dim(costtabs)[1],6),4])
+  rx1_costs_retin_10 = summary(costtabs[seq(2,dim(costtabs)[1],6),5])
+  rx1_costs_neuro_10 = summary(costtabs[seq(2,dim(costtabs)[1],6),6])
+  rx1_costs_ag_10 = summary(costtabs[seq(2,dim(costtabs)[1],6),7])
+  rx1_costs_prod_10 = summary(costtabs[seq(2,dim(costtabs)[1],6),8])
+  
+  rx1_costs_int_10+rx1_costs_ascvd_10+rx1_costs_dminc_10+rx1_costs_esrd_10+
+    rx1_costs_retin_10+rx1_costs_neuro_10
+  rx1_costs_ag_10+rx1_costs_prod_10
+  
+  rx2_costs_int_10 = summary(costtabs[seq(3,dim(costtabs)[1],6),1])
+  rx2_costs_ascvd_10 = summary(costtabs[seq(3,dim(costtabs)[1],6),2])
+  rx2_costs_dminc_10 = summary(costtabs[seq(3,dim(costtabs)[1],6),3])
+  rx2_costs_esrd_10 = summary(costtabs[seq(3,dim(costtabs)[1],6),4])
+  rx2_costs_retin_10 = summary(costtabs[seq(3,dim(costtabs)[1],6),5])
+  rx2_costs_neuro_10 = summary(costtabs[seq(3,dim(costtabs)[1],6),6])
+  rx2_costs_ag_10 = summary(costtabs[seq(3,dim(costtabs)[1],6),7])
+  rx2_costs_prod_10 = summary(costtabs[seq(3,dim(costtabs)[1],6),8])
+  
+  rx2_costs_int_10+rx2_costs_ascvd_10+rx2_costs_dminc_10+rx2_costs_esrd_10+
+    rx2_costs_retin_10+rx2_costs_neuro_10
+  rx2_costs_ag_10+rx2_costs_prod_10
+  
+  base_costs_int_life = summary(costtabs[seq(4,dim(costtabs)[1],6),1])
+  base_costs_ascvd_life = summary(costtabs[seq(4,dim(costtabs)[1],6),2])
+  base_costs_dminc_life = summary(costtabs[seq(4,dim(costtabs)[1],6),3])
+  base_costs_esrd_life = summary(costtabs[seq(4,dim(costtabs)[1],6),4])
+  base_costs_retin_life = summary(costtabs[seq(4,dim(costtabs)[1],6),5])
+  base_costs_neuro_life = summary(costtabs[seq(4,dim(costtabs)[1],6),6])
+  base_costs_ag_life = summary(costtabs[seq(4,dim(costtabs)[1],6),7])
+  base_costs_prod_life = summary(costtabs[seq(4,dim(costtabs)[1],6),8])
+  
+  base_costs_int_life+base_costs_ascvd_life+base_costs_dminc_life+base_costs_esrd_life+
+    base_costs_retin_life+base_costs_neuro_life
+  base_costs_ag_life+base_costs_prod_life
+  
+  rx1_costs_int_life = summary(costtabs[seq(5,dim(costtabs)[1],6),1])
+  rx1_costs_ascvd_life = summary(costtabs[seq(5,dim(costtabs)[1],6),2])
+  rx1_costs_dminc_life = summary(costtabs[seq(5,dim(costtabs)[1],6),3])
+  rx1_costs_esrd_life = summary(costtabs[seq(5,dim(costtabs)[1],6),4])
+  rx1_costs_retin_life = summary(costtabs[seq(5,dim(costtabs)[1],6),5])
+  rx1_costs_neuro_life = summary(costtabs[seq(5,dim(costtabs)[1],6),6])
+  rx1_costs_ag_life = summary(costtabs[seq(5,dim(costtabs)[1],6),7])
+  rx1_costs_prod_life = summary(costtabs[seq(5,dim(costtabs)[1],6),8])
+  
+  rx1_costs_int_life+rx1_costs_ascvd_life+rx1_costs_dminc_life+rx1_costs_esrd_life+
+    rx1_costs_retin_life+rx1_costs_neuro_life
+  rx1_costs_ag_life+rx1_costs_prod_life
+  
+  rx2_costs_int_life = summary(costtabs[seq(6,dim(costtabs)[1],6),1])
+  rx2_costs_ascvd_life = summary(costtabs[seq(6,dim(costtabs)[1],6),2])
+  rx2_costs_dminc_life = summary(costtabs[seq(6,dim(costtabs)[1],6),3])
+  rx2_costs_esrd_life = summary(costtabs[seq(6,dim(costtabs)[1],6),4])
+  rx2_costs_retin_life = summary(costtabs[seq(6,dim(costtabs)[1],6),5])
+  rx2_costs_neuro_life = summary(costtabs[seq(6,dim(costtabs)[1],6),6])
+  rx2_costs_ag_life = summary(costtabs[seq(6,dim(costtabs)[1],6),7])
+  rx2_costs_prod_life = summary(costtabs[seq(6,dim(costtabs)[1],6),8])
+  
+  rx2_costs_int_life+rx2_costs_ascvd_life+rx2_costs_dminc_life+rx2_costs_esrd_life+
+    rx2_costs_retin_life+rx2_costs_neuro_life
+  rx2_costs_ag_life+rx2_costs_prod_life
+  
+  partrate = 0.9
+  
+  icer_cash = (partrate*(rx1_costs_int_life+rx1_costs_ascvd_life+rx1_costs_dminc_life+rx1_costs_esrd_life+
+                  rx1_costs_retin_life+rx1_costs_neuro_life-(rx1_costs_ag_life+rx1_costs_prod_life))+(1-partrate)*((base_costs_int_life+base_costs_ascvd_life+base_costs_dminc_life+base_costs_esrd_life+
+                                                                                                                  base_costs_retin_life+base_costs_neuro_life))-(base_costs_int_life+base_costs_ascvd_life+base_costs_dminc_life+base_costs_esrd_life+
+                                                                                                        base_costs_retin_life+base_costs_neuro_life))/(partrate*(rx2_qalys_ascvd_life+rx2_qalys_dminc_life+rx2_qalys_esrd_life+
+                                                                                                                                                          rx2_qalys_retin_life+rx2_qalys_neuro_life+rx2_qalys_allmort_life)+(1-partrate)*((base_qalys_ascvd_life+base_qalys_dminc_life+base_qalys_esrd_life+
+                                                                                                                                                                                                                                             base_qalys_retin_life+base_qalys_neuro_life+base_qalys_allmort_life))-(base_qalys_ascvd_life+base_qalys_dminc_life+base_qalys_esrd_life+
+                                                                                                                                                                                                                               base_qalys_retin_life+base_qalys_neuro_life+base_qalys_allmort_life))
+  icer_CSA = (partrate*(rx2_costs_int_life+rx2_costs_ascvd_life+rx2_costs_dminc_life+rx2_costs_esrd_life+
+                 rx2_costs_retin_life+rx2_costs_neuro_life-(rx2_costs_ag_life+rx2_costs_prod_life))+(1-partrate)*((base_costs_int_life+base_costs_ascvd_life+base_costs_dminc_life+base_costs_esrd_life+
+                                                                                                                     base_costs_retin_life+base_costs_neuro_life))-(base_costs_int_life+base_costs_ascvd_life+base_costs_dminc_life+base_costs_esrd_life+
+                                                                                                       base_costs_retin_life+base_costs_neuro_life))/(partrate*(rx1_qalys_ascvd_life+rx1_qalys_dminc_life+rx1_qalys_esrd_life+
+                                                                                                                                                         rx1_qalys_retin_life+rx1_qalys_neuro_life+rx1_qalys_allmort_life)+(1-partrate)*((base_qalys_ascvd_life+base_qalys_dminc_life+base_qalys_esrd_life+
+                                                                                                                                                                                                                                            base_qalys_retin_life+base_qalys_neuro_life+base_qalys_allmort_life))-(base_qalys_ascvd_life+base_qalys_dminc_life+base_qalys_esrd_life+
+                                                                                                                                                                                                                              base_qalys_retin_life+base_qalys_neuro_life+base_qalys_allmort_life))
+  
+  
+  
+  #}
