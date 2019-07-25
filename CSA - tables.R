@@ -1,4 +1,3 @@
-setwd("~/Documents/OneDrive - Leland Stanford Junior University/Documents/Epi/Research/SDH/CSA")
 #install.packages('stargazer')
 #install.packages('ggplot2')
 load('merged.RData')
@@ -160,73 +159,73 @@ source("CSArun.R")
 iters = 1
 source("CSArun.R")
 
-qalytabs = matrix(0,6*iters,6)
+dalytabs = matrix(0,6*iters,6)
 start_time <- Sys.time()
 for (i in 1:iters){
-  qalytabs[((6*i-5):(6*i)),1:6] = CSArun(i)
+  dalytabs[((6*i-5):(6*i)),1:6] = CSArun(i)
 }
 end_time <- Sys.time()
 end_time-start_time
 
-# qalytab
+# dalytab
 # cols = #rx1_deltatab_10,rx1_deltatab_life,rx2_deltatab_10,rx2_deltatab_life
-# rows = ascvd_qalys_10,dminc_qalys_10,esrd_qalys_10,neuro_qalys_10,retin_qalys_10
-# save(qalytabs, file="qalys.RData")
+# rows = ascvd_dalys_10,dminc_dalys_10,esrd_dalys_10,neuro_dalys_10,retin_dalys_10
+# save(dalytabs, file="dalys.RData")
 # 
 # 
-base_qalys_ascvd_10 = summary(qalytabs[seq(1,dim(qalytabs)[1],6),1])
-base_qalys_dminc_10 = summary(qalytabs[seq(1,dim(qalytabs)[1],6),2])
-base_qalys_esrd_10 = summary(qalytabs[seq(1,dim(qalytabs)[1],6),3])
-base_qalys_retin_10 = summary(qalytabs[seq(1,dim(qalytabs)[1],6),4])
-base_qalys_neuro_10 = summary(qalytabs[seq(1,dim(qalytabs)[1],6),5])
-base_qalys_allmort_10 = summary(qalytabs[seq(1,dim(qalytabs)[1],6),6])
-base_qalys_ascvd_10+base_qalys_dminc_10+base_qalys_esrd_10+
-      base_qalys_retin_10+base_qalys_neuro_10+base_qalys_allmort_10
+base_dalys_ascvd_10 = summary(dalytabs[seq(1,dim(dalytabs)[1],6),1])
+base_dalys_dminc_10 = summary(dalytabs[seq(1,dim(dalytabs)[1],6),2])
+base_dalys_esrd_10 = summary(dalytabs[seq(1,dim(dalytabs)[1],6),3])
+base_dalys_retin_10 = summary(dalytabs[seq(1,dim(dalytabs)[1],6),4])
+base_dalys_neuro_10 = summary(dalytabs[seq(1,dim(dalytabs)[1],6),5])
+base_dalys_allmort_10 = summary(dalytabs[seq(1,dim(dalytabs)[1],6),6])
+base_dalys_ascvd_10+base_dalys_dminc_10+base_dalys_esrd_10+
+      base_dalys_retin_10+base_dalys_neuro_10+base_dalys_allmort_10
 
-rx1_qalys_ascvd_10 = summary(qalytabs[seq(2,dim(qalytabs)[1],6),1])
-rx1_qalys_dminc_10 = summary(qalytabs[seq(2,dim(qalytabs)[1],6),2])
-rx1_qalys_esrd_10 = summary(qalytabs[seq(2,dim(qalytabs)[1],6),3])
-rx1_qalys_retin_10 = summary(qalytabs[seq(2,dim(qalytabs)[1],6),4])
-rx1_qalys_neuro_10 = summary(qalytabs[seq(2,dim(qalytabs)[1],6),5])
-rx1_qalys_allmort_10 = summary(qalytabs[seq(2,dim(qalytabs)[1],6),6])
-rx1_qalys_ascvd_10+rx1_qalys_dminc_10+rx1_qalys_esrd_10+
-  rx1_qalys_retin_10+rx1_qalys_neuro_10+rx1_qalys_allmort_10
+rx1_dalys_ascvd_10 = summary(dalytabs[seq(2,dim(dalytabs)[1],6),1])
+rx1_dalys_dminc_10 = summary(dalytabs[seq(2,dim(dalytabs)[1],6),2])
+rx1_dalys_esrd_10 = summary(dalytabs[seq(2,dim(dalytabs)[1],6),3])
+rx1_dalys_retin_10 = summary(dalytabs[seq(2,dim(dalytabs)[1],6),4])
+rx1_dalys_neuro_10 = summary(dalytabs[seq(2,dim(dalytabs)[1],6),5])
+rx1_dalys_allmort_10 = summary(dalytabs[seq(2,dim(dalytabs)[1],6),6])
+rx1_dalys_ascvd_10+rx1_dalys_dminc_10+rx1_dalys_esrd_10+
+  rx1_dalys_retin_10+rx1_dalys_neuro_10+rx1_dalys_allmort_10
 
-rx2_qalys_ascvd_10 = summary(qalytabs[seq(3,dim(qalytabs)[1],6),1])
-rx2_qalys_dminc_10 = summary(qalytabs[seq(3,dim(qalytabs)[1],6),2])
-rx2_qalys_esrd_10 = summary(qalytabs[seq(3,dim(qalytabs)[1],6),3])
-rx2_qalys_retin_10 = summary(qalytabs[seq(3,dim(qalytabs)[1],6),4])
-rx2_qalys_neuro_10 = summary(qalytabs[seq(3,dim(qalytabs)[1],6),5])
-rx2_qalys_allmort_10 = summary(qalytabs[seq(3,dim(qalytabs)[1],6),6])
-rx2_qalys_ascvd_10+rx2_qalys_dminc_10+rx2_qalys_esrd_10+
-  rx2_qalys_retin_10+rx2_qalys_neuro_10+rx2_qalys_allmort_10
+rx2_dalys_ascvd_10 = summary(dalytabs[seq(3,dim(dalytabs)[1],6),1])
+rx2_dalys_dminc_10 = summary(dalytabs[seq(3,dim(dalytabs)[1],6),2])
+rx2_dalys_esrd_10 = summary(dalytabs[seq(3,dim(dalytabs)[1],6),3])
+rx2_dalys_retin_10 = summary(dalytabs[seq(3,dim(dalytabs)[1],6),4])
+rx2_dalys_neuro_10 = summary(dalytabs[seq(3,dim(dalytabs)[1],6),5])
+rx2_dalys_allmort_10 = summary(dalytabs[seq(3,dim(dalytabs)[1],6),6])
+rx2_dalys_ascvd_10+rx2_dalys_dminc_10+rx2_dalys_esrd_10+
+  rx2_dalys_retin_10+rx2_dalys_neuro_10+rx2_dalys_allmort_10
 
-base_qalys_ascvd_life = summary(qalytabs[seq(4,dim(qalytabs)[1],6),1])
-base_qalys_dminc_life = summary(qalytabs[seq(4,dim(qalytabs)[1],6),2])
-base_qalys_esrd_life = summary(qalytabs[seq(4,dim(qalytabs)[1],6),3])
-base_qalys_retin_life = summary(qalytabs[seq(4,dim(qalytabs)[1],6),4])
-base_qalys_neuro_life = summary(qalytabs[seq(4,dim(qalytabs)[1],6),5])
-base_qalys_allmort_life = summary(qalytabs[seq(4,dim(qalytabs)[1],6),6])
-base_qalys_ascvd_life+base_qalys_dminc_life+base_qalys_esrd_life+
-  base_qalys_retin_life+base_qalys_neuro_life+base_qalys_allmort_life
+base_dalys_ascvd_life = summary(dalytabs[seq(4,dim(dalytabs)[1],6),1])
+base_dalys_dminc_life = summary(dalytabs[seq(4,dim(dalytabs)[1],6),2])
+base_dalys_esrd_life = summary(dalytabs[seq(4,dim(dalytabs)[1],6),3])
+base_dalys_retin_life = summary(dalytabs[seq(4,dim(dalytabs)[1],6),4])
+base_dalys_neuro_life = summary(dalytabs[seq(4,dim(dalytabs)[1],6),5])
+base_dalys_allmort_life = summary(dalytabs[seq(4,dim(dalytabs)[1],6),6])
+base_dalys_ascvd_life+base_dalys_dminc_life+base_dalys_esrd_life+
+  base_dalys_retin_life+base_dalys_neuro_life+base_dalys_allmort_life
 
-rx1_qalys_ascvd_life = summary(qalytabs[seq(5,dim(qalytabs)[1],6),1])
-rx1_qalys_dminc_life = summary(qalytabs[seq(5,dim(qalytabs)[1],6),2])
-rx1_qalys_esrd_life = summary(qalytabs[seq(5,dim(qalytabs)[1],6),3])
-rx1_qalys_retin_life = summary(qalytabs[seq(5,dim(qalytabs)[1],6),4])
-rx1_qalys_neuro_life = summary(qalytabs[seq(5,dim(qalytabs)[1],6),5])
-rx1_qalys_allmort_life = summary(qalytabs[seq(5,dim(qalytabs)[1],6),6])
-rx1_qalys_ascvd_life+rx1_qalys_dminc_life+rx1_qalys_esrd_life+
-  rx1_qalys_retin_life+rx1_qalys_neuro_life+rx1_qalys_allmort_life
+rx1_dalys_ascvd_life = summary(dalytabs[seq(5,dim(dalytabs)[1],6),1])
+rx1_dalys_dminc_life = summary(dalytabs[seq(5,dim(dalytabs)[1],6),2])
+rx1_dalys_esrd_life = summary(dalytabs[seq(5,dim(dalytabs)[1],6),3])
+rx1_dalys_retin_life = summary(dalytabs[seq(5,dim(dalytabs)[1],6),4])
+rx1_dalys_neuro_life = summary(dalytabs[seq(5,dim(dalytabs)[1],6),5])
+rx1_dalys_allmort_life = summary(dalytabs[seq(5,dim(dalytabs)[1],6),6])
+rx1_dalys_ascvd_life+rx1_dalys_dminc_life+rx1_dalys_esrd_life+
+  rx1_dalys_retin_life+rx1_dalys_neuro_life+rx1_dalys_allmort_life
 
-rx2_qalys_ascvd_life = summary(qalytabs[seq(6,dim(qalytabs)[1],6),1])
-rx2_qalys_dminc_life = summary(qalytabs[seq(6,dim(qalytabs)[1],6),2])
-rx2_qalys_esrd_life = summary(qalytabs[seq(6,dim(qalytabs)[1],6),3])
-rx2_qalys_retin_life = summary(qalytabs[seq(6,dim(qalytabs)[1],6),4])
-rx2_qalys_neuro_life = summary(qalytabs[seq(6,dim(qalytabs)[1],6),5])
-rx2_qalys_allmort_life = summary(qalytabs[seq(6,dim(qalytabs)[1],6),6])
-rx2_qalys_ascvd_life+rx2_qalys_dminc_life+rx2_qalys_esrd_life+
-rx2_qalys_retin_life+rx2_qalys_neuro_life+rx2_qalys_allmort_life
+rx2_dalys_ascvd_life = summary(dalytabs[seq(6,dim(dalytabs)[1],6),1])
+rx2_dalys_dminc_life = summary(dalytabs[seq(6,dim(dalytabs)[1],6),2])
+rx2_dalys_esrd_life = summary(dalytabs[seq(6,dim(dalytabs)[1],6),3])
+rx2_dalys_retin_life = summary(dalytabs[seq(6,dim(dalytabs)[1],6),4])
+rx2_dalys_neuro_life = summary(dalytabs[seq(6,dim(dalytabs)[1],6),5])
+rx2_dalys_allmort_life = summary(dalytabs[seq(6,dim(dalytabs)[1],6),6])
+rx2_dalys_ascvd_life+rx2_dalys_dminc_life+rx2_dalys_esrd_life+
+rx2_dalys_retin_life+rx2_dalys_neuro_life+rx2_dalys_allmort_life
 
 iters = 10000
 source("CSArun.R")
@@ -324,12 +323,12 @@ rx2_costs_ag_life+rx2_costs_prod_life
 
 icer_cash = ((rx1_costs_int_life+rx1_costs_ascvd_life+rx1_costs_dminc_life+rx1_costs_esrd_life+
     rx1_costs_retin_life+rx1_costs_neuro_life-(rx1_costs_ag_life+rx1_costs_prod_life))-(base_costs_int_life+base_costs_ascvd_life+base_costs_dminc_life+base_costs_esrd_life+
-                                                  base_costs_retin_life+base_costs_neuro_life))/((rx2_qalys_ascvd_life+rx2_qalys_dminc_life+rx2_qalys_esrd_life+
-                                                                                                    rx2_qalys_retin_life+rx2_qalys_neuro_life+rx2_qalys_allmort_life)-(base_qalys_ascvd_life+base_qalys_dminc_life+base_qalys_esrd_life+
-                                                                                                                                                                         base_qalys_retin_life+base_qalys_neuro_life+base_qalys_allmort_life))
+                                                  base_costs_retin_life+base_costs_neuro_life))/((rx2_dalys_ascvd_life+rx2_dalys_dminc_life+rx2_dalys_esrd_life+
+                                                                                                    rx2_dalys_retin_life+rx2_dalys_neuro_life+rx2_dalys_allmort_life)-(base_dalys_ascvd_life+base_dalys_dminc_life+base_dalys_esrd_life+
+                                                                                                                                                                         base_dalys_retin_life+base_dalys_neuro_life+base_dalys_allmort_life))
 icer_CSA = ((rx2_costs_int_life+rx2_costs_ascvd_life+rx2_costs_dminc_life+rx2_costs_esrd_life+
     rx2_costs_retin_life+rx2_costs_neuro_life-(rx2_costs_ag_life+rx2_costs_prod_life))-(base_costs_int_life+base_costs_ascvd_life+base_costs_dminc_life+base_costs_esrd_life+
-                                                  base_costs_retin_life+base_costs_neuro_life))/((rx1_qalys_ascvd_life+rx1_qalys_dminc_life+rx1_qalys_esrd_life+
-                                                                                                    rx1_qalys_retin_life+rx1_qalys_neuro_life+rx1_qalys_allmort_life)-(base_qalys_ascvd_life+base_qalys_dminc_life+base_qalys_esrd_life+
-                                                                                                                                                                         base_qalys_retin_life+base_qalys_neuro_life+base_qalys_allmort_life))
+                                                  base_costs_retin_life+base_costs_neuro_life))/((rx1_dalys_ascvd_life+rx1_dalys_dminc_life+rx1_dalys_esrd_life+
+                                                                                                    rx1_dalys_retin_life+rx1_dalys_neuro_life+rx1_dalys_allmort_life)-(base_dalys_ascvd_life+base_dalys_dminc_life+base_dalys_esrd_life+
+                                                                                                                                                                         base_dalys_retin_life+base_dalys_neuro_life+base_dalys_allmort_life))
 
