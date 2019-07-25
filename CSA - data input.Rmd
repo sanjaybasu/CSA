@@ -1,7 +1,7 @@
 ---
 title: "CSA: Health impact and cost-effectiveness of community-supported agriculture"
 author: "Sanjay Basu"
-date: "2/15/2019"
+date: "07/23/2019"
 output: html_document
 ---
 
@@ -13,7 +13,7 @@ install.packages('data.table', repos = "https://cran.rstudio.com")
 install.packages('knitr', repos = "https://cran.rstudio.com")
 options(repos="https://cran.rstudio.com" )
 knitr::opts_chunk$set(echo = TRUE)
-setwd("~/Documents/Epi/Research/SDH/CSA")
+setwd("~/Box/Analytics Team/Research/Research Projects/CSA")
 ```
 
 ## Health impact and cost-effectiveness of community-supported agriculture
@@ -22,7 +22,7 @@ A a randomized clinical trial (NCT03231592) has revealed that participation in a
 
 Sanjay Basu*, Seth Berkowitz
 
-*basus@stanford.edu
+*sanjay_basu@hms.harvard.edu
 
 
 
