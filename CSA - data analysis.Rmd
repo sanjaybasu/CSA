@@ -1,7 +1,7 @@
 ---
 title: "CSA: Health impact and cost-effectiveness of community-supported agriculture"
 author: "Sanjay Basu"
-date: "2/15/2019"
+date: "7/23/2019"
 output: html_document
 ---
 
@@ -14,7 +14,7 @@ output: html_document
 # install.packages('knitr', repos = "https://cran.rstudio.com")
 options(repos="https://cran.rstudio.com" )
 knitr::opts_chunk$set(echo = TRUE)
-setwd("~/Documents/Epi/Research/SDH/CSA")
+setwd("~/Box/Analytics Team/Research/Research projects/CSA")
 ```
 
 ## Health impact and cost-effectiveness of community-supported agriculture
@@ -23,13 +23,13 @@ A a randomized clinical trial (NCT03231592) has revealed that participation in a
 
 Sanjay Basu*, Seth Berkowitz
 
-*basus@stanford.edu
+*sanjay_basu@hms.harvard.edu
 
 ``` {r load data, subset to eligible population}
 load('merged.RData')
 mergedt$eligible = ((mergedt$INDFMPIR<2) | (mergedt$HIQ031D==17))& (mergedt$BMXBMI>=25)
 table(mergedt$eligible)
-mergedsub = mergedt[which(mergedt$eligible==1),]
+
 
 age = mergedsub$RIDAGEYR
 female = (mergedsub$RIAGENDR=="Female")
@@ -415,8 +415,8 @@ rx2_dminc_life = 1-exp(-rx2_dminc_rate*lifeexp)
 ```
 
 
-# translate into QALYs, 10year and lifetime
-```{r QALYS lost at baseline}
+# translate into dalys, 10year and lifetime
+```{r dalyS lost at baseline}
 
 set.seed(iter*7)
 ascvd_events_10 = rbinom(popl, 1, ascvd_10)
@@ -467,7 +467,7 @@ d_retin[d_retin<0]=0
 d_neuro = rnorm(popl,.1,(.1-.05)/1.96)
 d_neuro[d_neuro<0]=0
 
-# QALYS lost
+# dalyS lost
 q_ascvd_10 = d_ascvd*10/2*ascvd_events_10*(mort_events_10==0)+
   1*10/2*ascvd_events_10*(mort_events_10==1)
 q_ascvd_life = d_ascvd*lifeexp/2*ascvd_events_life*(mort_events_life==0)+
@@ -492,11 +492,11 @@ q_allmort_10 = 10/2*(ascvd_events_10==0)*(dminc_events_10==0)*(esrd_events_10==0
 q_allmort_life = lifeexp/2*(ascvd_events_life==0)*(dminc_events_life==0)*(esrd_events_life==0)*(retin_events_life==0)*(neuro_events_life==0)*(mort_events_life==1)
 
 library(data.table)
-qalys_10 = data.table(q_ascvd_10, q_dminc_10, q_esrd_10, q_retin_10, q_neuro_10, q_allmort_10)
-qalys_life = data.table(q_ascvd_life, q_dminc_life, q_esrd_life, q_retin_life, q_neuro_life, q_allmort_life)
+dalys_10 = data.table(q_ascvd_10, q_dminc_10, q_esrd_10, q_retin_10, q_neuro_10, q_allmort_10)
+dalys_life = data.table(q_ascvd_life, q_dminc_life, q_esrd_life, q_retin_life, q_neuro_life, q_allmort_life)
 
 
-# QALYS lost under treatment 1
+# dalyS lost under treatment 1
 
 set.seed(iter*7)
 rx1_ascvd_events_10 = rbinom(popl, 1, rx1_ascvd_10)
@@ -528,7 +528,7 @@ set.seed(iter*20)
 rx1_mort_events_life = rbinom(popl, 1, rx1_allmort_life)
 
 
-# QALYS lost
+# dalyS lost
 rx1_q_ascvd_10 = d_ascvd*10/2*rx1_ascvd_events_10*(rx1_mort_events_10==0)+
   1*10/2*rx1_ascvd_events_10*(rx1_mort_events_10==1)
 rx1_q_ascvd_life = d_ascvd*lifeexp/2*rx1_ascvd_events_life*(rx1_mort_events_life==0)+
@@ -552,12 +552,12 @@ rx1_q_neuro_life = d_neuro*lifeexp/2*rx1_neuro_events_life*(rx1_mort_events_life
 rx1_q_allmort_10 = 10/2*(rx1_ascvd_events_10==0)*(rx1_dminc_events_10==0)*(rx1_esrd_events_10==0)*(rx1_retin_events_10==0)*(rx1_neuro_events_10==0)*(rx1_mort_events_10==1)
 rx1_q_allmort_life = lifeexp/2*(rx1_ascvd_events_life==0)*(rx1_dminc_events_life==0)*(rx1_esrd_events_life==0)*(rx1_retin_events_life==0)*(rx1_neuro_events_life==0)*(rx1_mort_events_life==1)
 
-rx1_qalys_10 = data.table(rx1_q_ascvd_10, rx1_q_dminc_10, rx1_q_esrd_10, rx1_q_retin_10, rx1_q_neuro_10, rx1_q_allmort_10)
-rx1_qalys_life = data.table(rx1_q_ascvd_life, rx1_q_dminc_life, rx1_q_esrd_life, rx1_q_retin_life, rx1_q_neuro_life, rx1_q_allmort_life)
+rx1_dalys_10 = data.table(rx1_q_ascvd_10, rx1_q_dminc_10, rx1_q_esrd_10, rx1_q_retin_10, rx1_q_neuro_10, rx1_q_allmort_10)
+rx1_dalys_life = data.table(rx1_q_ascvd_life, rx1_q_dminc_life, rx1_q_esrd_life, rx1_q_retin_life, rx1_q_neuro_life, rx1_q_allmort_life)
 
 
 
-# QALYS lost under treatment 2
+# dalyS lost under treatment 2
 
 set.seed(iter*7)
 rx2_ascvd_events_10 = rbinom(popl, 1, rx2_ascvd_10)
@@ -589,7 +589,7 @@ set.seed(iter*20)
 rx2_mort_events_life = rbinom(popl, 1, rx2_allmort_life)
 
 
-# QALYS lost
+# dalyS lost
 rx2_q_ascvd_10 = d_ascvd*10/2*rx2_ascvd_events_10*(rx2_mort_events_10==0)+
   1*10/2*rx2_ascvd_events_10*(rx2_mort_events_10==1)
 rx2_q_ascvd_life = d_ascvd*lifeexp/2*rx2_ascvd_events_life*(rx2_mort_events_life==0)+
@@ -613,8 +613,8 @@ rx2_q_neuro_life = d_neuro*lifeexp/2*rx2_neuro_events_life*(rx2_mort_events_life
 rx2_q_allmort_10 = 10/2*(rx2_ascvd_events_10==0)*(rx2_dminc_events_10==0)*(rx2_esrd_events_10==0)*(rx2_retin_events_10==0)*(rx2_neuro_events_10==0)*(rx2_mort_events_10==1)
 rx2_q_allmort_life = lifeexp/2*(rx2_ascvd_events_life==0)*(rx2_dminc_events_life==0)*(rx2_esrd_events_life==0)*(rx2_retin_events_life==0)*(rx2_neuro_events_life==0)*(rx2_mort_events_life==1)
 
-rx2_qalys_10 = data.table(rx2_q_ascvd_10, rx2_q_dminc_10, rx2_q_esrd_10, rx2_q_retin_10, rx2_q_neuro_10, rx2_q_allmort_10)
-rx2_qalys_life = data.table(rx2_q_ascvd_life, rx2_q_dminc_life, rx2_q_esrd_life, rx2_q_retin_life, rx2_q_neuro_life, rx2_q_allmort_life)
+rx2_dalys_10 = data.table(rx2_q_ascvd_10, rx2_q_dminc_10, rx2_q_esrd_10, rx2_q_retin_10, rx2_q_neuro_10, rx2_q_allmort_10)
+rx2_dalys_life = data.table(rx2_q_ascvd_life, rx2_q_dminc_life, rx2_q_esrd_life, rx2_q_retin_life, rx2_q_neuro_life, rx2_q_allmort_life)
 ```
 
 
@@ -802,36 +802,36 @@ colSums(rx2_costs_life)/popl*10000
 sum(colSums(rx2_costs_life)/popl*10000)
 sum(rx2_intcosts_life)
 
-# QALYS lost at baseline
-colSums(qalys_10)/popl*10000
-sum(colSums(qalys_10)/popl*10000)
-colSums(qalys_life)/popl*10000
-sum(colSums(qalys_life)/popl*10000)
+# dalyS lost at baseline
+colSums(dalys_10)/popl*10000
+sum(colSums(dalys_10)/popl*10000)
+colSums(dalys_life)/popl*10000
+sum(colSums(dalys_life)/popl*10000)
 
-# QALYS lost under Rx 1
-colSums(rx1_qalys_10)/popl*10000
-sum(colSums(rx1_qalys_10)/popl*10000)
-colSums(rx1_qalys_life)/popl*10000
-sum(colSums(rx1_qalys_life)/popl*10000)
+# dalyS lost under Rx 1
+colSums(rx1_dalys_10)/popl*10000
+sum(colSums(rx1_dalys_10)/popl*10000)
+colSums(rx1_dalys_life)/popl*10000
+sum(colSums(rx1_dalys_life)/popl*10000)
 
-# QALYS lost under Rx 2
-colSums(rx2_qalys_10)/popl*10000
-sum(colSums(rx2_qalys_10)/popl*10000)
-colSums(rx2_qalys_life)/popl*10000
-sum(colSums(rx2_qalys_life)/popl*10000)
+# dalyS lost under Rx 2
+colSums(rx2_dalys_10)/popl*10000
+sum(colSums(rx2_dalys_10)/popl*10000)
+colSums(rx2_dalys_life)/popl*10000
+sum(colSums(rx2_dalys_life)/popl*10000)
 
 
 # ICER of Rx 1 healthcare
 (sum((sum(rx1_costs_10)+rx1_intcosts_10)/popl*10000)-sum(sum(costs_10)/popl*10000))/
-  (sum(sum(rx1_qalys_10)/popl*10000)-sum(sum(qalys_10)/popl*10000))
+  (sum(sum(rx1_dalys_10)/popl*10000)-sum(sum(dalys_10)/popl*10000))
 (sum((sum(rx1_costs_life)+rx1_intcosts_life)/popl*10000)-sum(sum(costs_life)/popl*10000))/
-  (sum(sum(rx1_qalys_life)/popl*10000)-sum(sum(qalys_life)/popl*10000))
+  (sum(sum(rx1_dalys_life)/popl*10000)-sum(sum(dalys_life)/popl*10000))
 
 # ICER of Rx 2 healthcare
 (sum((sum(rx2_costs_10)+rx2_intcosts_10)/popl*10000)-sum(sum(costs_10)/popl*10000))/
-  (sum(sum(rx2_qalys_10)/popl*10000)-sum(sum(qalys_10)/popl*10000))
+  (sum(sum(rx2_dalys_10)/popl*10000)-sum(sum(dalys_10)/popl*10000))
 (sum((sum(rx2_costs_life)+rx2_intcosts_life)/popl*10000)-sum(sum(costs_life)/popl*10000))/
-  (sum(sum(rx2_qalys_life)/popl*10000)-sum(sum(qalys_life)/popl*10000))
+  (sum(sum(rx2_dalys_life)/popl*10000)-sum(sum(dalys_life)/popl*10000))
 
 ```
 
@@ -867,18 +867,14 @@ sum((rx2_econben_life)/popl*10000)
 
 
 # ICER of Rx 1 societal
-((sum(sum(rx1_costs_10+rx1_prod_10)+rx1_intcosts_10-rx1_econben_10)/popl*10000)-sum(sum(costs_10+prod_10)/popl*10000))/(sum(sum(rx1_qalys_10)/popl*10000)-sum(sum(qalys_10)/popl*10000))
-((sum(sum(rx1_costs_life+rx1_prod_life)+rx1_intcosts_life-rx1_econben_life)/popl*10000)-sum(sum(costs_life+prod_life)/popl*10000))/(sum(sum(rx1_qalys_life)/popl*10000)-sum(sum(qalys_life)/popl*10000))
+((sum(sum(rx1_costs_10+rx1_prod_10)+rx1_intcosts_10-rx1_econben_10)/popl*10000)-sum(sum(costs_10+prod_10)/popl*10000))/(sum(sum(rx1_dalys_10)/popl*10000)-sum(sum(dalys_10)/popl*10000))
+((sum(sum(rx1_costs_life+rx1_prod_life)+rx1_intcosts_life-rx1_econben_life)/popl*10000)-sum(sum(costs_life+prod_life)/popl*10000))/(sum(sum(rx1_dalys_life)/popl*10000)-sum(sum(dalys_life)/popl*10000))
 
 # ICER of Rx 2 societal
-((sum(sum(rx2_costs_10+rx2_prod_10)+rx2_intcosts_10-rx2_econben_10)/popl*10000)-sum(sum(costs_10+prod_10)/popl*10000))/(sum(sum(rx2_qalys_10)/popl*10000)-sum(sum(qalys_10)/popl*10000))
-((sum(sum(rx2_costs_life+rx2_prod_life)+rx2_intcosts_life-rx2_econben_life)/popl*10000)-sum(sum(costs_life+prod_life)/popl*10000))/(sum(sum(rx2_qalys_life)/popl*10000)-sum(sum(qalys_life)/popl*10000))
+((sum(sum(rx2_costs_10+rx2_prod_10)+rx2_intcosts_10-rx2_econben_10)/popl*10000)-sum(sum(costs_10+prod_10)/popl*10000))/(sum(sum(rx2_dalys_10)/popl*10000)-sum(sum(dalys_10)/popl*10000))
+((sum(sum(rx2_costs_life+rx2_prod_life)+rx2_intcosts_life-rx2_econben_life)/popl*10000)-sum(sum(costs_life+prod_life)/popl*10000))/(sum(sum(rx2_dalys_life)/popl*10000)-sum(sum(dalys_life)/popl*10000))
 
 ```
 
 
-# sensitivity analysis to see what overhead rate represents the 'break-even' between cash and CSA (i.e. how cheap does the CSA have to run to offset the extra overhead)
-
-
-# alternatively how much bigger an effect size would it need over cash, taking additional overhead as fixed).
 
