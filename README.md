@@ -5,4 +5,4 @@ A a randomized clinical trial (NCT03231592) has revealed that participation in a
 
 Sanjay Basu*, Seth Berkowitz
 
-*basus@stanford.edu
+*sanjay_basu@hms.harvard.edu
